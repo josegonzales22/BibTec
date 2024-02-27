@@ -1,0 +1,76 @@
+body,html{
+    height: 100%;
+}
+body{
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.dev/svgjs' width='1440' height='560' preserveAspectRatio='none' viewBox='0 0 1440 560'%3e%3cg mask='url(%26quot%3b%23SvgjsMask1042%26quot%3b)' fill='none'%3e%3crect width='1440' height='560' x='0' y='0' fill='url(%26quot%3b%23SvgjsLinearGradient1043%26quot%3b)'%3e%3c/rect%3e%3cpath d='M1332.7677612502653 405.8985131525384L1300.0177419484728 458.3094998679579 1395.0092316724983 481.2290354629371z' fill='rgba(129%2c 106%2c 253%2c 1)' class='triangle-float2'%3e%3c/path%3e%3cpath d='M1195.3222925310683 391.04037289998143L1108.6472705951248 501.9793419470439 1219.5862396421874 588.6543638829874 1306.2612615781309 477.71539483592494z' fill='rgba(129%2c 106%2c 253%2c 1)' class='triangle-float1'%3e%3c/path%3e%3cpath d='M1296.5%2c300.988C1329.597%2c301%2c1360.442%2c284.773%2c1377.814%2c256.601C1396.122%2c226.911%2c1403.249%2c188.221%2c1383.956%2c159.161C1365.98%2c132.084%2c1328.926%2c131.907%2c1296.5%2c134.12C1268.816%2c136.009%2c1242.872%2c146.713%2c1227.533%2c169.836C1210.239%2c195.906%2c1200.73%2c228.852%2c1215.29%2c256.541C1230.684%2c285.815%2c1263.425%2c300.976%2c1296.5%2c300.988' fill='rgba(129%2c 106%2c 253%2c 1)' class='triangle-float1'%3e%3c/path%3e%3cpath d='M370.546%2c265.18C413.482%2c264.079%2c455.922%2c245.751%2c476.249%2c207.916C495.698%2c171.716%2c483.941%2c128.861%2c462.677%2c93.696C442.293%2c59.986%2c409.927%2c34.119%2c370.546%2c33.112C329.462%2c32.061%2c292.03%2c54.152%2c269.874%2c88.765C245.663%2c126.589%2c232.763%2c174.582%2c255.021%2c213.587C277.425%2c252.846%2c325.359%2c266.338%2c370.546%2c265.18' fill='rgba(129%2c 106%2c 253%2c 1)' class='triangle-float2'%3e%3c/path%3e%3cpath d='M832.8148553936817 270.93808041751134L885.9844001664472 402.5373216867125 1017.5836414356484 349.3677769139469 964.4140966628828 217.76853564474575z' fill='rgba(129%2c 106%2c 253%2c 1)' class='triangle-float1'%3e%3c/path%3e%3cpath d='M731.804%2c295.254C772.978%2c295.428%2c817.221%2c287.522%2c838.813%2c252.464C861.237%2c216.054%2c854.815%2c168.985%2c831.744%2c132.982C810.414%2c99.696%2c771.328%2c86.371%2c731.804%2c85.474C690.274%2c84.532%2c645.954%2c93.192%2c623.688%2c128.262C600.07%2c165.461%2c602.405%2c214.578%2c626.352%2c251.566C648.515%2c285.798%2c691.024%2c295.082%2c731.804%2c295.254' fill='rgba(129%2c 106%2c 253%2c 1)' class='triangle-float2'%3e%3c/path%3e%3cpath d='M524.0138240144481 402.7771401727452L464.0394661076981 289.98177801536747 351.2441039503204 349.9561359221175 411.2184618570704 462.7514980794952z' fill='rgba(129%2c 106%2c 253%2c 1)' class='triangle-float1'%3e%3c/path%3e%3cpath d='M1045.1094698320478 357.66411803372847L968.0928858422816 415.70027682429884 1093.6554160230203 502.207073413663z' fill='rgba(129%2c 106%2c 253%2c 1)' class='triangle-float2'%3e%3c/path%3e%3cpath d='M164.97395414648403 446.8931719603245L83.51493476418146 397.9476551488961 34.5694179527531 479.4066745311987 116.02843733505567 528.3521913426271z' fill='rgba(129%2c 106%2c 253%2c 1)' class='triangle-float2'%3e%3c/path%3e%3cpath d='M174.77962355619837 113.10752609952259L247.1154855742521 13.54575341617597 147.55371289090547-58.79010860187775 75.21785087285176 40.77166408146887z' fill='rgba(129%2c 106%2c 253%2c 1)' class='triangle-float1'%3e%3c/path%3e%3cpath d='M652.128%2c696.178C700.056%2c696.183%2c738.061%2c660.864%2c762.165%2c619.438C786.44%2c577.718%2c795.692%2c528.573%2c775.037%2c484.947C751.013%2c434.204%2c708.268%2c387.643%2c652.128%2c387.025C595.237%2c386.399%2c548.784%2c430.765%2c524.443%2c482.189C503.295%2c526.869%2c516.8%2c576.968%2c542.129%2c619.417C566.684%2c660.57%2c604.206%2c696.173%2c652.128%2c696.178' fill='rgba(129%2c 106%2c 253%2c 1)' class='triangle-float1'%3e%3c/path%3e%3cpath d='M-34.49259951982031 174.39038448562934L40.7449823517842 209.47424509342224 55.751982327671286 79.07594198211902z' fill='rgba(129%2c 106%2c 253%2c 1)' class='triangle-float1'%3e%3c/path%3e%3c/g%3e%3cdefs%3e%3cmask id='SvgjsMask1042'%3e%3crect width='1440' height='560' fill='white'%3e%3c/rect%3e%3c/mask%3e%3clinearGradient x1='50%25' y1='100%25' x2='50%25' y2='0%25' gradientUnits='userSpaceOnUse' id='SvgjsLinearGradient1043'%3e%3cstop stop-color='rgba(219%2c 231%2c 253%2c 1)' offset='0'%3e%3c/stop%3e%3cstop stop-color='rgba(212%2c 204%2c 255%2c 1)' offset='1'%3e%3c/stop%3e%3c/linearGradient%3e%3cstyle%3e svg%7b filter:blur(4px)%7D %40keyframes float1 %7b 0%25%7btransform: translate(0%2c 0)%7d 50%25%7btransform: translate(-10px%2c 0)%7d 100%25%7btransform: translate(0%2c 0)%7d %7d .triangle-float1 %7b animation: float1 5s infinite%3b %7d %40keyframes float2 %7b 0%25%7btransform: translate(0%2c 0)%7d 50%25%7btransform: translate(-5px%2c -5px)%7d 100%25%7btransform: translate(0%2c 0)%7d %7d .triangle-float2 %7b animation: float2 4s infinite%3b %7d %40keyframes float3 %7b 0%25%7btransform: translate(0%2c 0)%7d 50%25%7btransform: translate(0%2c -10px)%7d 100%25%7btransform: translate(0%2c 0)%7d %7d .triangle-float3 %7b animation: float3 6s infinite%3b %7d %3c/style%3e%3c/defs%3e%3c/svg%3e");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+
+}
+.cont-logo{
+    font-size: 3vh;
+    color: #816AFD;
+    font-weight: 500;
+}
+.title{
+    color: #303546;
+    font-size: 5vh;
+    font-weight: 600;
+}
+.sub-title{
+    color: #a0a0a5;
+    font-size: 2.5vh;
+    font-weight: 200;
+}
+.container{
+    align-self: center;
+}
+.container .izq{
+    border-radius: 20px 0 0 20px;
+    padding: 30px;
+    align-self: center;
+}
+.container .der{
+    border-radius: 0 20px 20px 0;
+    background-color: #816AFD;
+}
+.formulario img.logo{
+    width: 45px;
+}
+.container .der .image{
+    width: 60%;
+    display: block;
+    margin: auto;
+}
+span.link{
+    font-weight: 500;
+}
+span.link a{
+    color: #929198;
+    text-decoration: none;
+    font-size: 2.5vh;
+}
+span.link a:hover{
+    color: #816AFD;
+}
+span.link.alt a:hover{
+    color: #5446a4;
+}
+.jump{
+    display: none;
+}
+label{
+    font-size: 3vh;
+}
+@media only screen and (max-width: 912px) {
+    .formulario .der{display: none;}
+    .container .izq{border-radius: 20px;}
+    .jump{display: block;}
+    button{width: 100%;}
+    button.btn-b{margin-bottom: 20px;}
+    label{font-size: 2vh;}
+}
