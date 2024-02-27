@@ -1,0 +1,17 @@
+import './jsqrcode/grid.js';
+import './jsqrcode/version.js';
+import './jsqrcode/detector.js';
+import './jsqrcode/formatinf.js';
+import './jsqrcode/errorlevel.js';
+import './jsqrcode/bitmat.js';
+import './jsqrcode/datablock.js';
+import './jsqrcode/bmparser.js';
+import './jsqrcode/datamask.js';
+import './jsqrcode/rsdecoder.js';
+import './jsqrcode/gf256.js';
+import './jsqrcode/decoder.js';
+import './jsqrcode/qrcode.js';
+import './jsqrcode/findpat.js';
+import './jsqrcode/alignpat.js';
+import './jsqrcode/databr.js';
+import './jsQR/jsQR.js';

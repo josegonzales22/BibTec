@@ -1,0 +1,30 @@
+@import url('reset.css');
+
+button{
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+button.btn-a, a.btn-a{
+    background-color: #816AFD;
+    color: #F4F4F4;
+}
+button.btn-a:hover{
+    border-color: #816AFD;
+    color: #816AFD;
+}
+button.btn-b{
+    border-color: #816AFD;
+    color: #816AFD;
+}
+button.btn-b:hover{
+    background-color: #816AFD;
+    color: #F4F4F4;
+}
+button.btn-cancel{
+    background-color: #dc3545;
+    color: #F4F4F4;
+}
+button.btn-cancel:hover{
+    border-color: #dc3545;
+    color: #dc3545;
+}
