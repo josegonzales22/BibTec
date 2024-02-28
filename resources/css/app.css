@@ -8,15 +8,15 @@ button.btn-a, a.btn-a{
     background-color: #816AFD;
     color: #F4F4F4;
 }
-button.btn-a:hover{
+button.btn-a:hover, a.btn-a:hover{
     border-color: #816AFD;
     color: #816AFD;
 }
-button.btn-b{
+button.btn-b, a.btn-b{
     border-color: #816AFD;
     color: #816AFD;
 }
-button.btn-b:hover{
+button.btn-b:hover, a.btn-b:hover{
     background-color: #816AFD;
     color: #F4F4F4;
 }
