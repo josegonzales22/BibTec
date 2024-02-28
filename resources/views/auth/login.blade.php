@@ -42,7 +42,11 @@
                             </div>
                             <div class="col-12 text-end">
                                 <span class="link">
-                                    <a href="php/trabajador/cambiarC/correo.php">¿Olvidaste tu contraseña?</a>
+                                    @if (Route::has('password.request'))
+                                        <a class="btn btn-link" href="{{ route('password.request') }}">
+                                            {{ __('¿Olvidaste tu contraseña?') }}
+                                        </a>
+                                    @endif
                                 </span>
                             </div>
                             <div class="col-12">
@@ -50,12 +54,6 @@
                                 <button type="submit" class="btn btn-a">Login</button>
                                 <br class="jump"><br class="jump">
                                 <a href="{{ route('register') }}" class="btn btn-b">Registrar</a>
-                            </div>
-                            <div class="col-12">
-                                <br>
-                                <span class="link alt">
-                                    <a href="php/estudiante/login.php">¿Eres un estudiante?</a>
-                                </span>
                             </div>
                         </div>
                     </form>
