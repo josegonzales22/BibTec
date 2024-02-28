@@ -6,4 +6,3 @@
 @vite('resources/css/app.css')
 @vite('resources/sass/app.scss')
 @vite('resources/css/styleindex.css')
-<title>Login | BibTec</title>

@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     @include('layouts.head-login')
+    <title>Login | BibTec</title>
 </head>
 <body>
     <div class="container formulario">
@@ -48,7 +49,7 @@
                                 <br class="jump">
                                 <button type="submit" class="btn btn-a">Login</button>
                                 <br class="jump"><br class="jump">
-                                <button type="button" class="btn btn-b">Registrar</button>
+                                <a href="{{ route('register') }}" class="btn btn-b">Registrar</a>
                             </div>
                             <div class="col-12">
                                 <br>
