@@ -17,7 +17,6 @@ return new class extends Migration
         DB::table('perfil')->insert(['tipo' => 'Trabajador']);
         DB::table('perfil')->insert(['tipo' => 'Estudiante']);
     }
-
     public function down(): void
     {
         Schema::dropIfExists('perfil');

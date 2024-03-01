@@ -13,7 +13,6 @@ return new class extends Migration
             $table->foreign('perfil_id')->references('id')->on('perfil')->onDelete('cascade');
         });
     }
-
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
