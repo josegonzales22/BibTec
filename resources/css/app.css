@@ -10,6 +10,7 @@ button.btn-a, a.btn-a{
 }
 button.btn-a:hover, a.btn-a:hover{
     border-color: #816AFD;
+    background-color: #F4F4F4;
     color: #816AFD;
 }
 button.btn-b, a.btn-b{
