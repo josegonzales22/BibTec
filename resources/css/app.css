@@ -21,11 +21,12 @@ button.btn-b:hover, a.btn-b:hover{
     background-color: #816AFD;
     color: #F4F4F4;
 }
-button.btn-cancel{
+button.btn-cancel, a.btn-cancel{
     background-color: #dc3545;
     color: #F4F4F4;
 }
-button.btn-cancel:hover{
+button.btn-cancel:hover, a.btn-cancel:hover{
+    background-color: transparent;
     border-color: #dc3545;
     color: #dc3545;
 }

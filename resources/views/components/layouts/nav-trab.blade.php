@@ -18,9 +18,11 @@
         Inventario
     </div>
     <li class="nav-item">
-        <a class="nav-link {{ request()->routeIs('libro.*') ? 'text-light fw-bolder' : '' }}" id="nav-link"
+        <a class="nav-link {{ request()->routeIs('libro.*') ? 'text-light fw-bolder' : '' }}
+            {{ request()->routeIs('autor.*') ? 'text-light fw-bolder' : '' }}" id="nav-link"
             href="{{ route('libro.index') }}">
-            <i class="fa-solid fa-book {{ request()->routeIs('libro.*') ? 'text-light' : '' }}"></i>
+            <i class="fa-solid fa-book {{ request()->routeIs('libro.*') ? 'text-light' : '' }}
+                {{ request()->routeIs('autor.*') ? 'text-light' : '' }}"></i>
             <span>Libros</span>
         </a>
     </li>

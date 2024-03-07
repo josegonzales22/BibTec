@@ -12,12 +12,7 @@ iname="Dashboard">
                             <div class="text-xs font-weight-bold text-light text-uppercase mb-1">
                             Libros</div>
                             <div class="h5 mb-0 font-weight-bold text-light">
-                                <?php
-                                    try {
-                                        if(contarTotalLibros()){echo "".contarTotalLibros();}
-                                        else{echo "0";}
-                                    } catch (\Throwable $th) {echo "0";}
-                                ?>
+                                {{ app(App\Http\Controllers\DashboardController::class)->contarLibros() }}
                             </div>
                         </div>
                         <div class="col-auto">
@@ -35,12 +30,7 @@ iname="Dashboard">
                             <div class="text-xs font-weight-bold text-light text-uppercase mb-1">
                             Estudiantes</div>
                             <div class="h5 mb-0 font-weight-bold text-light">
-                                <?php
-                                    try {
-                                        if(contarTotalEstudiantes()){echo "".contarTotalEstudiantes();}
-                                        else{echo "0";}
-                                    } catch (\Throwable $th) {echo "0";}
-                                ?>
+                                {{ app(App\Http\Controllers\DashboardController::class)->contarEstudiante() }}
                             </div>
                         </div>
                         <div class="col-auto">
@@ -58,12 +48,7 @@ iname="Dashboard">
                             <div class="text-xs font-weight-bold text-light text-uppercase mb-1">
                             Préstamos (Mensuales)</div>
                             <div class="h5 mb-0 font-weight-bold text-light">
-                                <?php
-                                    try {
-                                        if(contarTotalPrestamosMens()){echo "".contarTotalPrestamosMens();}
-                                        else{echo "0";}
-                                    } catch (\Throwable $th) {echo "0";}
-                                ?>
+                                {{ app(App\Http\Controllers\DashboardController::class)->contarPrestamo() }}
                             </div>
                         </div>
                         <div class="col-auto">
@@ -81,12 +66,7 @@ iname="Dashboard">
                             <div class="text-xs font-weight-bold text-light text-uppercase mb-1">
                             Devoluciones (Mensuales)</div>
                             <div class="h5 mb-0 font-weight-bold text-light">
-                                <?php
-                                    try {
-                                        if(contarTotalDevolucionesMens()){echo "".contarTotalDevolucionesMens();}
-                                        else{echo "0";}
-                                    } catch (\Throwable $th) {echo "0";}
-                                ?>
+                                {{ app(App\Http\Controllers\DashboardController::class)->contarDevolucion() }}
                             </div>
                         </div>
                         <div class="col-auto">

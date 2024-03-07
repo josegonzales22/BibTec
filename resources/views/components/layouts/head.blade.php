@@ -7,4 +7,4 @@
 @vite('resources/css/app.css')
 @vite('resources/css/sb-admin-2.min.css')
 @vite('resources/css/fontawesome-free/css/all.min.css')
-<title>{{$title ?? ''}} - BibTec</title>
+<title>{{$title ?? ''}} | BibTec</title>
