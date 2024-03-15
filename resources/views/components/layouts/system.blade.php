@@ -4,13 +4,16 @@
     <x-layouts.head
         title="{{$title2 ?? ''}}">
     </x-layouts.head>
+    @yield('css_tagsinput')
 </head>
 <body id="page-top">
+    <!--
     <div class="justify-content-center align-items-center" style="height: 100vh; display:flex;" id="loader">
         <div class="spinner-border " role="status" >
             <span class="sr-only">Loading...</span>
         </div>
     </div>
+-->
     <div id="wrapper">
         <x-layouts.nav-trab/>
         <div id="content-wrapper" class="d-flex flex-column">
@@ -29,10 +32,10 @@
     </div>
 <x-layouts.modal/>
 @vite('resources/js/jquery/jquery.min.js')
+<script src="{{ asset('js/jquery/jquery.min.js') }}"></script>
 @vite('resources/js/sb-admin-2.min.js')
 @vite('resources/js/bootstrap/bootstrap.bundle.min.js')
-<script>
-
-</script>
+@yield('js_tagsinput')
+@yield('js_addToPlantilla')
 </body>
 </html>

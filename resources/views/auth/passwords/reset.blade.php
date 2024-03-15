@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    @include('layouts.head-login')
+    @include('components.layouts.head-login')
     <title>Contraseña | BibTec</title>
 </head>
 <body>

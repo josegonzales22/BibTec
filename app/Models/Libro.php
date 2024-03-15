@@ -9,7 +9,6 @@ class Libro extends Model
 {
     use HasFactory;
     protected $table = 'libros';
-
     protected $fillable =
     [
         'titulo',
@@ -20,4 +19,7 @@ class Libro extends Model
         'idioma',
         'cantidad'
     ];
+    public function plantillas(){
+        return $this->belongsToMany(Plantilla::class, 'plantilla_libro');
+    }
 }

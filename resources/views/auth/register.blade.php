@@ -103,7 +103,7 @@
                             @enderror
                         </div>
                         <div class="col-12">
-                            <label for="password-confirm" class="col-form-label">Contraseña</label>
+                            <label for="password-confirm" class="col-form-label">Confirmar contraseña</label>
                             <input id="password-confirm" type="password" class="form-control @error('password-confirm') is-invalid @enderror" name="password_confirmation"
                             value="{{ old('password-confirm') }}" required autocomplete="new-password" autofocus placeholder="********">
                             @error('password-confirm')
