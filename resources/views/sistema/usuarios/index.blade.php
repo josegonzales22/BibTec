@@ -1,6 +1,6 @@
 <x-layouts.system
-title2="Libros"
-iname="Libros">
+title2="Usuarios"
+iname="Usuarios">
 <style>.d-icons{font-size:40px;color:whitesmoke;}</style>
 <main class="container-fluid">
     <div class="card shadow ">
@@ -14,10 +14,10 @@ iname="Libros">
                 </div>
             @endif
             <div class="input-group md-form form-sm form-2 pl-0">
-                <form action="{{ route('libro.index') }}" method="post" class="form-inline col-12 p-0">
+                <form action="{{ route('usuario.index') }}" method="post" class="form-inline col-12 p-0">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <div class="input-group w-100">
-                        <input class="form-control my-0 py-1 red-border" type="text" name="busquedaInput" placeholder="Buscar libro" aria-label="Search">
+                        <input class="form-control my-0 py-1 red-border" type="text" name="busquedaInput" placeholder="Buscar usuario" aria-label="Search">
                         <div class="input-group-append">
                             <button class="btn btn-sm btn-a" type="submit">
                                 <i class="fas fa-search" aria-hidden="true"></i>
@@ -30,46 +30,48 @@ iname="Libros">
                 <table class="table table-bordered table-hover">
                     <thead>
                         <tr class="font-weight-bold text-dark">
-                            <th scope="col">Título</th>
-                            <th scope="col">Editorial</th>
-                            <th scope="col">Año</th>
-                            <th scope="col">Categoría</th>
-                            <th scope="col">Páginas</th>
-                            <th scope="col">Idioma</th>
-                            <th scope="col">Cantidad</th>
-                            <th scope="col">Autores</th>
+                            <th scope="col">Dni</th>
+                            <th scope="col">Nombres</th>
+                            <th scope="col">Apellidos</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Rol</th>
+                            <th scope="col">Permisos</th>
                             <th scope="col">Opciones</th>
                         </tr>
                     </thead>
                     <tbody class="fw-light text-secondary">
-                        @foreach ($libros as $libro)
-                            <tr>
-                                <th>{{$libro->titulo}}</th>
-                                <th>{{$libro->editorial}}</th>
-                                <th>{{$libro->pub}}</th>
-                                <th>{{$libro->genero}}</th>
-                                <th>{{$libro->numpag}}</th>
-                                <th>{{$libro->idioma}}</th>
-                                <th>{{$libro->cantidad}}</th>
-                                <td>{{$libro->Autores}}</td>
+                        @foreach ($usuarios as $usuario)
+                            <tr {{Auth::user()->id == $usuario->id ? 'bgcolor=#ddd' : '' }}>
+                                <td>{{$usuario->dni}}</td>
+                                <td>{{$usuario->nombres}}</td>
+                                <td>{{$usuario->apellidos}}</td>
+                                <td>{{$usuario->email}}</td>
+                                <td>
+                                    @if ($usuario->roles->isNotEmpty())
+                                        @foreach ($usuario->roles as $role)
+                                            <span class="badge badge-secondary">{{$role->name}}</span>
+                                        @endforeach
+                                    @endif
+                                </td>
+                                <td>
+                                    @if ($usuario->permissions->isNotEmpty())
+                                        @foreach ( $usuario->permissions as $permission)
+                                        <span class="badge badge-secondary">{{$permission->name}}</span>
+                                        @endforeach
+                                    @endif
+                                </td>
                                 <td>
                                     <div class='d-flex align-items-center justify-content-center'>
-                                        <a href='{{ route('libro.edit', $libro) }}' class='btn btn-sm bg-warning text-light mr-1'>
+                                        <a href="/usuarios/{{$usuario->id}}" class='btn btn-sm bg-warning text-light mr-1'>
                                             <i class="fa-regular fa-pen-to-square"></i>
                                         </a>
-                                        <form id="eliminarLibroForm" action="{{ route('libro.delete', $libro->id) }}" method="POST">
+                                        <form id="eliminarLibroForm" action="{{ route('usuario.delete', ['user'=>$usuario->id]) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm bg-danger text-light mr-1">
                                                 <i class="fa-solid fa-trash"></i>
                                             </button>
                                         </form>
-                                        <a href='' class='btn btn-sm bg-primary text-light mr-1'>
-                                            <i class="fa-solid fa-box-archive"></i>
-                                        </a>
-                                        <a href='' class='btn btn-sm bg-info text-light mr-1'>
-                                            <i class="fa-solid fa-inbox"></i>
-                                        </a>
                                     </div>
                                 </td>
                             </tr>
@@ -81,11 +83,15 @@ iname="Libros">
         <div class="col-12 mb-3 " style="text-align: right; margin-left: 12px;">
             <div class="col-12 mr-4">
                 <div class="d-flex justify-content-end">
-                    {{ $libros->appends(['busquedaInput' => $busqueda])->onEachSide(1)->render('pagination::bootstrap-5') }}
+                    {{ $usuarios->appends(['busquedaInput' => $busqueda])->onEachSide(1)->render('pagination::bootstrap-5') }}
                 </div>
             </div>
-            <a href="{{ route('autor.index') }}" class="btn w-40 my-1 mr-4 btn-a"><i class="fa-solid fa-users"></i>Autor</a>
-            <a href="{{ route('libro.new') }}" class="btn w-40 my-1 mr-4 btn-a"><i class="fa-solid fa-file-circle-plus"></i>Nuevo</a>
+            <a href="{{route('rol.index')}}" class="btn w-40 my-1 mr-4 btn-a">
+                <i class="fa-regular fa-address-card"></i> Roles
+            </a>
+            <a href="{{ route('usuario.create') }}" class="btn w-40 my-1 mr-4 btn-a">
+                <i class="fa-solid fa-file-circle-plus"></i> Nuevo
+            </a>
         </div>
     </div>
 </main>

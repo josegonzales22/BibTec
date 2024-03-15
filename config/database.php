@@ -76,7 +76,12 @@ return [
             'prefix_indexes' => true,
             'search_path' => 'public',
             'sslmode' => 'prefer',
+            'options' => [
+                'sslmode' => 'require',
+                'options' => ['endpoint' => 'ep-shrill-paper-a597ar4a']
+            ]
         ],
+
 
         'sqlsrv' => [
             'driver' => 'sqlsrv',

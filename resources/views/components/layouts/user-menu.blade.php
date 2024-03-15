@@ -6,7 +6,7 @@
                 {{Auth::user()->nombres}}
                 <br>
                 <span class="text-white pl-2 pr-2" style="background-color: #816af3;">
-                    {{Auth::user()->profile->tipo}}
+                    {{Auth::user()->roles->isNotEmpty() ? Auth::user()->roles->first()->name:""}}
                 </span>
             </span>
             <i class="fa-solid fa-user-large" style="color: #816afe"></i>

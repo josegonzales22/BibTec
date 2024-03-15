@@ -74,7 +74,6 @@ iname="Autor">
                     {{ $autores->appends(['busquedaInput' => $busqueda])->onEachSide(1)->render('pagination::bootstrap-5') }}
                 </div>
             </div>
-            <a href="" class="btn w-40 my-1 mr-4 btn-a"><i class="fa-solid fa-file-circle-plus"></i>Nuevo</a>
         </div>
     </div>
     <div class="modal fade" id="modalAutor" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
