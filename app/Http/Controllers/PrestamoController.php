@@ -52,6 +52,22 @@ class PrestamoController extends Controller
             ->get();
         return view('sistema.prestamo.plantillas.index', ['plantillas' => $plantillas]);
     }
+    public function viewPlantilla($id){
+        try {
+            $plantilla = Plantilla::findOrFail($id);
+            return view('sistema.prestamo.plantillas.view', ['plantilla' => $plantilla]);
+        } catch (\Throwable $th) {
+            return redirect()->route('plantilla.index')->with('status', $th->getMessage());
+        }
+    }
+    public function editPlantilla($id){
+        try {
+            $plantilla = Plantilla::findOrFail($id);
+            return view('sistema.prestamo.plantillas.edit', ['plantilla' => $plantilla]);
+        } catch (\Throwable $th) {
+            return redirect()->route('plantilla.index')->with('status', $th->getMessage());
+        }
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -81,7 +97,6 @@ class PrestamoController extends Controller
     {
         try {
             if($this->checkUserIsStudent($request->dniEstudiante)){
-                //echo "El estudiante existe";
                 $idU=$this->obtainIdStudent($request->dniEstudiante);
                 if($idU){
                     echo $idU;
@@ -182,6 +197,14 @@ class PrestamoController extends Controller
     {
         //
     }
+    public function destroyPlantilla(Plantilla $plantilla){
+        try {
+            $plantilla->delete();
+            return redirect()->route('plantilla.index')->with('status', 'Plantilla eliminada exitosamente');
+        } catch (\Throwable $th) {
+            return redirect()->route('plantilla.index')->with('status', $th->getMessage());
+        }
+    }
     public function verStockLibro($idBook){
         $stock = DB::table('libros')->where('id', $idBook)->value('cantidad');
         return $stock;
@@ -208,6 +231,79 @@ class PrestamoController extends Controller
             else {return false;}
         } catch (\Throwable $th) {
             return false;
+        }
+    }
+    public function checkBaulIsEmpty(){
+        try {
+            $cant = DB::table('baul_pres')
+                ->where('idUser', Auth::user()->id)
+                ->count();
+            if($cant>0){return false;}
+            else{return true;}
+        } catch (\Throwable $th) {
+            return true;
+        }
+    }
+    public function updateNombrePlantilla(Request $request){
+        try {
+            $p = Plantilla::findOrFail($request->idP);
+            $p->nombre=$request->nombreP;
+            $p->save();
+            return redirect()->route('plantilla.edit', ['plantilla'=>$request->idP])->with('status', 'Plantilla modificada correctamente');
+        } catch (\Throwable $th) {
+            return redirect()->route('plantilla.edit', ['plantilla'=>$request->idP])->with('status', $th->getMessage());
+        }
+    }
+    public function removeLibroFromPlantilla($plantilla, $libro){
+        try {
+            DB::table('plantilla_libro')
+                ->where('plantilla_id', $plantilla)
+                ->where('libro_id',$libro)
+                ->delete();
+            return redirect()->route('plantilla.edit', ['plantilla' => $plantilla])->with('status', 'Libro eliminado de la plantilla');
+        } catch (\Throwable $th) {
+            return redirect()->route('plantilla.edit', ['plantilla'=>$plantilla])->with('status', $th->getMessage());
+        }
+    }
+    public function verBaulVacio($idUser){
+        try {
+            $cond = DB::table('baul_pres')
+            ->where('idUser', $idUser)
+            ->exists();
+            return $cond;
+        } catch (\Throwable $th) {
+            return true;
+        }
+    }
+    public function verLibrosEnPlantilla($idP){
+        try {
+            $cant = DB::table('plantilla_libro')
+            ->where('plantilla_id', $idP)
+            ->count();
+            return $cant != 0;
+        } catch (\Throwable $th) {
+            return false;
+        }
+    }
+    public function usePlantilla(Plantilla $plantilla){
+        try {
+            if(!$this->verBaulVacio(Auth::user()->id)){
+                if($this->verLibrosEnPlantilla($plantilla->id)){
+                    foreach($plantilla->libros as $libro){
+                        DB::table('baul_pres')->insert([
+                        'idUser' => Auth::user()->id,
+                        'idLibro' => $libro->id
+                        ]);
+                    }
+                    return redirect()->route('prestamo.baul');
+                }else{
+                    return redirect()->route('plantilla.index')->with('status', 'La plantilla no contiene libros');
+                }
+            }else{
+                return redirect()->route('plantilla.index')->with('status', 'El baúl no esta vacío');
+            }
+        } catch (\Throwable $th) {
+            return redirect()->route('plantilla.index')->with('status', $th->getMessage());
         }
     }
 }
