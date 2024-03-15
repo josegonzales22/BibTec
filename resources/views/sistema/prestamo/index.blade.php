@@ -44,7 +44,9 @@ iname="Prestamos">
                                 <td>{{$prestamo->titulo}}</td>
                                 <td>{{$prestamo->cantidad}}</td>
                                 <td>{{$prestamo->f_prestamo}}</td>
-                                <td class="text-danger">{{$prestamo->estado}}</td>
+                                <td class="{{$prestamo->estado == 'Pendiente' ? 'text-danger' : 'text-success'}}">
+                                    {{$prestamo->estado}}
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

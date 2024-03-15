@@ -13,47 +13,52 @@ iname="Baul préstamos">
                     </button>
                 </div>
             @endif
-            <div class="table-responsive mt-3" style="overflow-y:auto;height:50vh;">
-                <table class="table table-bordered table-hover">
-                    <thead>
-                        <tr class="font-weight-bold text-dark">
-                            <th scope="col">Titulo</th>
-                            <th scope="col">Categoría</th>
-                            <th scope="col">Páginas</th>
-                            <th scope="col">Idioma</th>
-                            <th scope="col">Opciones</th>
-                        </tr>
-                    </thead>
-                    <tbody class="fw-light text-secondary">
-                        @foreach ($libros as $libro)
-                            <tr>
-                                <td>{{$libro->titulo}}</td>
-                                <td>{{$libro->genero}}</td>
-                                <td>{{$libro->numpag}}</td>
-                                <td>{{$libro->idioma}}</td>
-                                <td>
-                                    <form action="{{ route('prestamo.deleteFromBaul', ['user' => Auth::user()->id, 'book' => $libro->id]) }}" method="post">
-                                        @csrf
-                                        <button type="submit" class='btn btn-sm bg-danger text-light mr-1' title="Eliminar del baúl">
-                                            <i class="fa-solid fa-x"></i>
-                                        </button>
-                                    </form>
-                                </td>
+            @if (app(App\Http\Controllers\PrestamoController::class)->checkBaulIsEmpty())
+                <x-layouts.empty/>
+            @else
+                <div class="table-responsive mt-3" style="overflow-y:auto;height:50vh;">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr class="font-weight-bold text-dark">
+                                <th scope="col">Titulo</th>
+                                <th scope="col">Categoría</th>
+                                <th scope="col">Páginas</th>
+                                <th scope="col">Idioma</th>
+                                <th scope="col">Opciones</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-            <div class="form-group">
-                <form action="{{ route('prestamo.store') }}" method="post">
-                    @csrf
-                    <label for="dniEstudiante">Documento Nacional de Identidad</label>
-                    <input type="text" class="form-control" id="dniEstudiante" name="dniEstudiante" placeholder="Ingrese el dni del estudiante">
-                    <div class="text-center mt-3">
-                        <button class="btn btn-a">Finalizar</button>
-                    </div>
-                </form>
-            </div>
+                        </thead>
+                        <tbody class="fw-light text-secondary">
+                            @foreach ($libros as $libro)
+                                <tr>
+                                    <td>{{$libro->titulo}}</td>
+                                    <td>{{$libro->genero}}</td>
+                                    <td>{{$libro->numpag}}</td>
+                                    <td>{{$libro->idioma}}</td>
+                                    <td>
+                                        <form action="{{ route('prestamo.deleteFromBaul', ['user' => Auth::user()->id, 'book' => $libro->id]) }}" method="post">
+                                            @csrf
+                                            <button type="submit" class='btn btn-sm bg-danger text-light mr-1' title="Eliminar del baúl">
+                                                <i class="fa-solid fa-x"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <div class="form-group">
+                    <form action="{{ route('prestamo.store') }}" method="post">
+                        @csrf
+                        <label for="dniEstudiante">Documento Nacional de Identidad</label>
+                        <input type="text" class="form-control" id="dniEstudiante" name="dniEstudiante" placeholder="Ingrese el dni del estudiante">
+                        <div class="text-center mt-3">
+                            <button class="btn btn-a">Finalizar</button>
+                        </div>
+                    </form>
+                </div>
+            @endif
+
         </div>
     </div>
 </main>

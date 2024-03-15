@@ -60,6 +60,12 @@ Route::post('/prestamos/baul/finalizar', [PrestamoController::class, 'store'])->
 Route::post('/prestamos/dbaul/{user}/{book}',[PrestamoController::class,'deleteFromBaul'])->name('prestamo.deleteFromBaul');
 Route::get('/prestamos/plantillas',[PrestamoController::class, 'viewListPlantillas'])->name('plantilla.index');
 Route::post('/prestamos/plantillas/save', [PrestamoController::class, 'savePlantilla'])->name('plantilla.save');
+Route::get('/prestamos/plantillas/view/{plantilla}', [PrestamoController::class, 'viewPlantilla'])->name('plantilla.view');
+Route::get('/prestamos/plantillas/edit/{plantilla}', [PrestamoController::class, 'editPlantilla'])->name('plantilla.edit');
+Route::put('/prestamos/plantillas/update', [PrestamoController::class, 'updateNombrePlantilla'])->name('plantilla.update.nombre');
+Route::post('/prestamos/plantillas/usar/{plantilla}', [PrestamoController::class, 'usePlantilla'])->name('plantilla.usar');
+Route::delete('/prestamos/plantillas/libros/delete/{plantilla}/{libro}', [PrestamoController::class, 'removeLibroFromPlantilla'])->name('plantilla.delete.libro');
+Route::delete('/prestamos/plantillas/delete/{plantilla}', [PrestamoController::class, 'destroyPlantilla'])->name('plantilla.delete');
 
 Route::get('/devoluciones', [DevolucionController::class, 'index'])->name('devolucion.index')->middleware('can:isAdminOrTrabajadorOrProfesor');
 

@@ -30,7 +30,21 @@ iname="Plantillas">
                                     <td>{{$plantilla->id}}</td>
                                     <td>{{$plantilla->nombre}}</td>
                                     <td>{{$plantilla->libros_count}}</td>
-                                    <td></td>
+                                    <td>
+                                        <div class='d-flex align-items-center justify-content-center'>
+                                            <a href="{{ route('plantilla.view', ['plantilla'=>$plantilla->id]) }}" class="btn btn-sm bg-info text-light mr-1">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </a>
+                                            <a href="{{ route('plantilla.edit', ['plantilla'=>$plantilla->id]) }}" class="btn btn-sm bg-warning text-light mr-1">
+                                                <i class="fa-solid fa-pencil"></i>
+                                            </a>
+                                            <form action="{{ route('plantilla.delete', ['plantilla'=>$plantilla->id]) }}" method="post">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm bg-danger text-light"><i class="fa-solid fa-x"></i></button>
+                                            </form>
+                                        </div>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
