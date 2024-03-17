@@ -19,7 +19,7 @@ class PrestamoController extends Controller
     {
         $busqueda = $request->busquedaInput;
         $prestamos = DB::table('prestamo as P')
-            ->selectRaw('CONCAT(U.nombres, " ", U.apellidos) AS estudiante, L.titulo, P.cantidad, P.f_prestamo, P.estado')
+            ->selectRaw('P.id, CONCAT(U.nombres, " ", U.apellidos) AS estudiante, L.titulo, P.cantidad, P.f_prestamo, P.estado')
             ->join('users as U', 'P.idUser', '=', 'U.id')
             ->join('libros as L', 'P.idLibro', '=', 'L.id')
             ->where(function($query) use($busqueda){
@@ -304,6 +304,40 @@ class PrestamoController extends Controller
             }
         } catch (\Throwable $th) {
             return redirect()->route('plantilla.index')->with('status', $th->getMessage());
+        }
+    }
+    public function movePrestamoToBaul(Prestamo $prestamo){
+        try {
+            DB::table('baul_dev')->insert([
+                'idUser' => Auth::user()->id,
+                'idPres' => $prestamo->id
+            ]);
+            return redirect()->route('prestamo.index')->with('status', 'Prestamo agregado al baúl de devoluciones');
+        } catch (\Throwable $th) {
+            return redirect()->route('prestamo.index')->with('status', $th->getMessage());
+        }
+    }
+    public function removePrestamoFromBaul($idP){
+        try {
+            DB::table('baul_dev')
+            ->where('idUser', Auth::user()->id)
+            ->where('idPres', $idP)
+            ->delete();
+            return redirect()->route('prestamo.index')->with('status',
+            'Prestamo eliminado del baúl');
+        } catch (\Throwable $th) {
+            return redirect()->route('prestamo.index')->with('status', $th->getMessage());
+        }
+    }
+    public function checkPrestamoFromBaul($idP){
+        try {
+            $cond = DB::table('baul_dev')
+                ->where('idUser', Auth::user()->id)
+                ->where('idPres', $idP)
+                ->exists();
+            return $cond;
+        } catch (\Throwable $th) {
+            return false;
         }
     }
 }

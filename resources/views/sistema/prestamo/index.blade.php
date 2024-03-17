@@ -35,6 +35,7 @@ iname="Prestamos">
                             <th scope="col">Cantidad</th>
                             <th scope="col">Fecha P.</th>
                             <th scope="col">Estado</th>
+                            <th scope="col">Opciones</th>
                         </tr>
                     </thead>
                     <tbody class="fw-light text-secondary">
@@ -47,6 +48,24 @@ iname="Prestamos">
                                 <td class="{{$prestamo->estado == 'Pendiente' ? 'text-danger' : 'text-success'}}">
                                     {{$prestamo->estado}}
                                 </td>
+                                <td class="text-center">
+                                    @if (app(App\Http\Controllers\PrestamoController::class)->checkPrestamoFromBaul($prestamo->id))
+                                        <form action="{{ route('bauld.remove', ['prestamo'=>$prestamo->id]) }}" method="post">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm bg-danger text-white">
+                                                <i class="fa-solid fa-x"></i>
+                                            </button>
+                                        </form>
+                                    @else
+                                        <form action="{{ route('prestamo.bauld', ['prestamo'=>$prestamo->id]) }}" method="post">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-info">
+                                                <i class="fa-solid fa-box-archive"></i>
+                                            </button>
+                                        </form>
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -58,12 +77,15 @@ iname="Prestamos">
                         {{$prestamos->appends(['busquedaInput' => $busqueda])->onEachSide(1)->render('pagination::bootstrap-5')}}
                     </div>
                 </div>
-                <a href="{{ route('prestamo.baul') }}" class="btn w-40 my-1 mr-4 btn-a">
+                <a href="{{ route('prestamo.baul') }}" class="btn w-40 my-1 mr-2 btn-a">
                     {{app(App\Http\Controllers\LibrosController::class)->verCantBaulLibro(Auth::user()->id)}}
                     <i class="fa-solid fa-box-archive"></i>
                 </a>
-                <a href="{{ route('plantilla.index') }}" class="btn w-40 my-1 mr-4 btn-a">
+                <a href="{{ route('plantilla.index') }}" class="btn w-40 my-1 mr-2 btn-a">
                     <i class="fa-solid fa-inbox"></i> Plantillas
+                </a>
+                <a href="#" class="btn w-40 my-1 btn-a" >
+                    <i class="fa-solid fa-folder-tree"></i> Generar
                 </a>
             </div>
         </div>
