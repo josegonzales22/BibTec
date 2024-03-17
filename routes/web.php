@@ -58,6 +58,9 @@ Route::post('/prestamos', [PrestamoController::class, 'index'])->name('prestamo.
 Route::get('/prestamos/baul',[PrestamoController::class, 'viewBaul'])->name('prestamo.baul');
 Route::post('/prestamos/baul/finalizar', [PrestamoController::class, 'store'])->name('prestamo.store');
 Route::post('/prestamos/dbaul/{user}/{book}',[PrestamoController::class,'deleteFromBaul'])->name('prestamo.deleteFromBaul');
+Route::post('prestamos/atbd/{prestamo}', [PrestamoController::class, 'movePrestamoToBaul'])->name('prestamo.bauld');
+Route::delete('/prestamos/dbaul/remove/{prestamo}', [PrestamoController::class, 'removePrestamoFromBaul'])->name('bauld.remove');
+
 Route::get('/prestamos/plantillas',[PrestamoController::class, 'viewListPlantillas'])->name('plantilla.index');
 Route::post('/prestamos/plantillas/save', [PrestamoController::class, 'savePlantilla'])->name('plantilla.save');
 Route::get('/prestamos/plantillas/view/{plantilla}', [PrestamoController::class, 'viewPlantilla'])->name('plantilla.view');

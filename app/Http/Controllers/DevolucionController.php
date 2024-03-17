@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Devolucion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DevolucionController extends Controller
 {
@@ -61,5 +62,25 @@ class DevolucionController extends Controller
     public function destroy(Devolucion $devolucion)
     {
         //
+    }
+    public function verCantBaulPres($idUser){
+        try {
+            $cant = DB::table('baul_dev')
+            ->where('idUser', $idUser)
+            ->count();
+            return $cant;
+        } catch (\Throwable $th) {
+            $cant=-1;
+            return $cant;
+        }
+    }
+    public function checkTableDevolucionIsNotEmpty(){
+        try {
+            $cant = DB::table('devolucion')->count();
+            if($cant>0){return true;}
+            else {return false;}
+        } catch (\Throwable $th) {
+            return false;
+        }
     }
 }
