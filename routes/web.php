@@ -6,6 +6,8 @@ use App\Http\Controllers\DevolucionController;
 use App\Http\Controllers\HistorialController;
 use App\Http\Controllers\LibrosController;
 use App\Http\Controllers\PrestamoController;
+use App\Http\Controllers\QrCodeGenerator;
+use App\Http\Controllers\QrController;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UsuarioController;
@@ -60,7 +62,6 @@ Route::post('/prestamos/baul/finalizar', [PrestamoController::class, 'store'])->
 Route::post('/prestamos/dbaul/{user}/{book}',[PrestamoController::class,'deleteFromBaul'])->name('prestamo.deleteFromBaul');
 Route::post('prestamos/atbd/{prestamo}', [PrestamoController::class, 'movePrestamoToBaul'])->name('prestamo.bauld');
 Route::delete('/prestamos/dbaul/remove/{prestamo}', [PrestamoController::class, 'removePrestamoFromBaul'])->name('bauld.remove');
-
 Route::get('/prestamos/plantillas',[PrestamoController::class, 'viewListPlantillas'])->name('plantilla.index');
 Route::post('/prestamos/plantillas/save', [PrestamoController::class, 'savePlantilla'])->name('plantilla.save');
 Route::get('/prestamos/plantillas/view/{plantilla}', [PrestamoController::class, 'viewPlantilla'])->name('plantilla.view');
@@ -69,6 +70,12 @@ Route::put('/prestamos/plantillas/update', [PrestamoController::class, 'updateNo
 Route::post('/prestamos/plantillas/usar/{plantilla}', [PrestamoController::class, 'usePlantilla'])->name('plantilla.usar');
 Route::delete('/prestamos/plantillas/libros/delete/{plantilla}/{libro}', [PrestamoController::class, 'removeLibroFromPlantilla'])->name('plantilla.delete.libro');
 Route::delete('/prestamos/plantillas/delete/{plantilla}', [PrestamoController::class, 'destroyPlantilla'])->name('plantilla.delete');
+Route::post('/prestamos/generarQR', [PrestamoController::class, 'procesarInfoPrestamo'])->name('prestamo.generarQR');
+
+Route::get('/enviarQR/{text}/{email}', [QrController::class, 'generateQR'])->name('temp');
+Route::get('/convertpng', [QrController::class, 'convertSVGtoPNG'])->name('convertPNG');
+Route::post('/guardar-imagen', [QrController::class, 'guardarPNGPublic']);
+Route::get('/enviar', [QrController::class, 'enviarCorreoConQR'])->name('enviarCorreoQR');
 
 Route::get('/devoluciones', [DevolucionController::class, 'index'])->name('devolucion.index')->middleware('can:isAdminOrTrabajadorOrProfesor');
 

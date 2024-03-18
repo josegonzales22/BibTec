@@ -63,4 +63,10 @@ class PrestamosPolicy
     {
         //
     }
+
+    public function userIsEstudent(User $user){
+        return $user->roles->contains(function ($role) {
+            return $role->slug === 'estudiante';
+        });
+    }
 }
