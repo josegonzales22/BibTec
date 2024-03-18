@@ -84,11 +84,37 @@ iname="Prestamos">
                 <a href="{{ route('plantilla.index') }}" class="btn w-40 my-1 mr-2 btn-a">
                     <i class="fa-solid fa-inbox"></i> Plantillas
                 </a>
-                <a href="#" class="btn w-40 my-1 btn-a" >
+                <a href="#" class="btn w-40 my-1 btn-a" data-toggle="modal" data-target="#qrModal">
                     <i class="fa-solid fa-folder-tree"></i> Generar
                 </a>
             </div>
         </div>
     </div>
 </main>
+<div class="modal fade" id="qrModal" tabindex="-1" role="dialog" aria-labelledby="qrModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Enviar QR</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="{{ route('prestamo.generarQR') }}" method="post">
+            @csrf
+            <div class="modal-body">
+                <label for="fechaConsulta">Fecha de préstamo</label>
+                <input type="date" name="fechaConsulta" id="fechaConsulta" class="form-control">
+                <label for="dniEstudiante">Dni del estudiante</label>
+                <input type="number" name="dniEstudiante" id="dniEstudiante" class="form-control"
+                placeholder="ej. 12345678">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-cancel" data-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-a">Enviar</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </x-layouts.system>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Plantilla;
 use App\Models\Prestamo;
 use App\Models\User;
+use App\Policies\PrestamosPolicy;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -338,6 +339,44 @@ class PrestamoController extends Controller
             return $cond;
         } catch (\Throwable $th) {
             return false;
+        }
+    }
+    public function procesarInfoPrestamo(Request $request){
+        $dni = $request->dniEstudiante;
+        $fecha = $request->fechaConsulta;
+        try {
+            $user = User::where('dni', $dni)->firstOrFail();
+            if($user){
+                $policy = new PrestamosPolicy();
+                if($policy->userIsEstudent($user)){
+                    $prestamos = Prestamo::where('idUser', $user->id)
+                                        ->where('estado', 'Pendiente')
+                                        ->where('f_prestamo', $fecha)
+                                        ->get();
+                    $count = $prestamos->count();
+                    if($count > 0){
+                        $textoTemp = "";
+                        foreach ($prestamos as $prestamo){
+                            $textoTemp = "pLe=".$prestamo->id.";".$textoTemp;
+                        }
+                        $emailUser = $user->email;
+                        try {
+                            return redirect()->route('temp', ['text' => $textoTemp, 'email' => $emailUser]);
+                        } catch (\Throwable $th) {
+                            return redirect()->route('prestamo.index')->with('status', $th->getMessage());
+                        }
+                        return redirect()->route('prestamo.index')->with('status', 'Código qr enviado exitosamente');
+                    }else{
+                        return redirect()->route('prestamo.index')->with('status', 'No existen préstamos pendientes en la fecha ingresada');
+                    }
+                }else{
+                    return redirect()->route('prestamo.index')->with('status', 'El usuario no es estudiante');
+                }
+            }else{
+                return redirect()->route('prestamo.index')->with('status', 'El usuario no existe');
+            }
+        } catch (\Throwable $th) {
+            echo $th->getMessage();
         }
     }
 }
