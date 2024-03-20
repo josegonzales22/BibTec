@@ -361,7 +361,7 @@ class PrestamoController extends Controller
                         }
                         $emailUser = $user->email;
                         try {
-                            return redirect()->route('temp', ['text' => $textoTemp, 'email' => $emailUser]);
+                            return redirect()->route('prestamo.saveqr', ['text' => $textoTemp, 'email' => $emailUser]);
                         } catch (\Throwable $th) {
                             return redirect()->route('prestamo.index')->with('status', $th->getMessage());
                         }

@@ -11,6 +11,7 @@ use App\Http\Controllers\QrController;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UsuarioController;
+use App\Models\Devolucion;
 use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -71,12 +72,15 @@ Route::post('/prestamos/plantillas/usar/{plantilla}', [PrestamoController::class
 Route::delete('/prestamos/plantillas/libros/delete/{plantilla}/{libro}', [PrestamoController::class, 'removeLibroFromPlantilla'])->name('plantilla.delete.libro');
 Route::delete('/prestamos/plantillas/delete/{plantilla}', [PrestamoController::class, 'destroyPlantilla'])->name('plantilla.delete');
 Route::post('/prestamos/generarQR', [PrestamoController::class, 'procesarInfoPrestamo'])->name('prestamo.generarQR');
-
-Route::get('/enviarQR/{text}/{email}', [QrController::class, 'generateQR'])->name('temp');
-Route::get('/convertpng', [QrController::class, 'convertSVGtoPNG'])->name('convertPNG');
-Route::post('/guardar-imagen', [QrController::class, 'guardarPNGPublic']);
-Route::get('/enviar', [QrController::class, 'enviarCorreoConQR'])->name('enviarCorreoQR');
+Route::get('/save-qr-code/{text}/{email}', [QrController::class, 'saveQRCode'])->name('prestamo.saveqr');
+Route::get('/ecorreo/{email}', [QrController::class, 'enviarCorreoConQR'])->name('prestamo.enviarQR');
 
 Route::get('/devoluciones', [DevolucionController::class, 'index'])->name('devolucion.index')->middleware('can:isAdminOrTrabajadorOrProfesor');
+Route::post('/devoluciones', [DevolucionController::class, 'index'])->name('devolucion.index')->middleware('can:isAdminOrTrabajadorOrProfesor');
+Route::get('/devoluciones/baul', [DevolucionController::class, 'baulIndex'])->name('devolucion.baul.index');
+Route::post('/devoluciones/baul/delete/{user}/{prestamo}', [DevolucionController::class, 'deleteFromBaul'])->name('dbaul.delete');
+Route::post('/devoluciones/baul/save/{user}', [DevolucionController::class, 'procesarBaul'])->name('dbaul.process');
+Route::get('/devoluciones/escaner', [DevolucionController::class, 'escanerIndex'])->name('devolucion.escaner');
+Route::post('/devoluciones/escaner/{cadena}', [DevolucionController::class, 'procesarInfoEscaner'])->name('devolucion.escaner.info');
 
 Route::get('/historial', [HistorialController::class, 'index'])->name('historial.index')->middleware('can:isAdminOrTrabajador');
