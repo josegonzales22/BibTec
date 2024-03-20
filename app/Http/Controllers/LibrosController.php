@@ -240,4 +240,13 @@ class LibrosController extends Controller
             return redirect()->route('libro.index')->with('status', $th->getMessage());
         }
     }
+    public function checkTableLibroIsNotEmpty(){
+        try {
+            $cant = DB::table('libros')->count();
+            if($cant>0){return true;}
+            else {return false;}
+        } catch (\Throwable $th) {
+            return false;
+        }
+    }
 }

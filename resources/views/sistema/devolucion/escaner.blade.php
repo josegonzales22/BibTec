@@ -14,24 +14,19 @@
         <button id="refreshButton" onclick="refreshScanner()">New Scan</button>
         <a href="{{ route('devolucion.index') }}" class="btn btn-a">Regresar</a>
     </div>
+    <form action="" method="post" class="d-none" id="scanForm">@csrf</form>
     <script src="{{ asset('js/scan/html5-qrcode.min.js') }}"></script>
     <script>
-      function onScanSuccess(decodedText, decodedResult) {
-        console.log(`Scan result: ${decodedText}`, decodedResult);
-        if (isValidUrl(decodedText)) {
-            var scanResultLink = document.getElementById("scanResultUrl");
-            scanResultLink.href = decodedText;
-            scanResultLink.innerText = decodedText;
-        } else {
-            document.getElementById("scanResultText").textContent = `Scan result: ${decodedText}`;
-        }
-        html5QrcodeScanner.clear();
+    function onScanSuccess(decodedText, decodedResult) {
         document.getElementById("refreshButton").style.display = "block";
-      }
-      function refreshScanner() {
+        var form = document.getElementById("scanForm");
+        form.action = "/devoluciones/escaner/"+decodedText;
+        form.submit();
+    }
+    function refreshScanner() {
         location.reload(true);
-      }
-      function isValidUrl(url) {
+    }
+    function isValidUrl(url) {
         var pattern = new RegExp(
           "^(https?:\\/\\/)?" +
             "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" +
@@ -40,11 +35,11 @@
             "(\\?[;&a-z\\d%@_.,~+&:=-]*)?" +
             "(\\#[-a-z\\d_]*)?$",
           "i"
-        );
-        return !!pattern.test(url);
-      }
-      var html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
-      html5QrcodeScanner.render(onScanSuccess);
+    );
+    return !!pattern.test(url);
+    }
+    var html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+    html5QrcodeScanner.render(onScanSuccess);
     </script>
   </body>
 </html>

@@ -13,6 +13,7 @@ iname="Autor">
                     </button>
                 </div>
             @endif
+            @if (app(App\Http\Controllers\AutorController::class)->checkTableAutorIsNotEmpty())
             <div class="input-group md-form form-sm form-2 pl-0">
                 <form action="{{ route('autor.index') }}" method="post" class="form-inline col-12 p-0">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -60,7 +61,6 @@ iname="Autor">
                                             </button>
                                         </form>
                                     </div>
-
                                 </th>
                             </tr>
                         @endforeach
@@ -75,6 +75,9 @@ iname="Autor">
                 </div>
             </div>
         </div>
+        @else
+            <x-layouts.empty/>
+        @endif
     </div>
     <div class="modal fade" id="modalAutor" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">

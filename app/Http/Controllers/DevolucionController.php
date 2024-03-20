@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Devolucion;
 use App\Models\Libro;
 use App\Models\Prestamo;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class DevolucionController extends Controller
 {
@@ -129,7 +131,47 @@ class DevolucionController extends Controller
     Escáner
     ========
     */
+    public function obtenerEstadoPrestamo($id){
+        $prestamo = Prestamo::findOrFail($id);
+        return $prestamo->estado;
+    }
+
+
     public function procesarInfoEscaner($cadena){
-        dd($cadena);
+        try {
+            $checkText = substr($cadena, 0, 4);
+            if($checkText=="pLe="){
+                preg_match_all("/pLe=(\d+);/", $cadena, $matches);
+                $numeros = $matches[1];
+                $pendientes = [];
+                foreach ($numeros as $numero) {
+                    if($this->obtenerEstadoPrestamo($numero)=='Pendiente'){
+                        $pendientes[] = $numero;
+                    }
+                }
+                if(count($pendientes)>0){
+                    $fAct = Carbon::now();
+                    foreach ($pendientes as $pendiente) {
+                        DB::beginTransaction();
+                        $presTemp = Prestamo::findOrFail($pendiente);
+                        $devTemp = Devolucion::create([
+                            'idUser' => $presTemp->idUser,
+                            'idLibro' => $presTemp->idLibro,
+                            'cantidad' => $presTemp->cantidad,
+                            'f_prestamo' => $presTemp->f_prestamo,
+                            'f_devolucion' => $fAct
+                        ]);
+                        $presTemp->estado='Completado';
+                        $presTemp->save();
+                        DB::commit();
+                    }
+                }
+                return redirect()->route('devolucion.index')->with('status', 'Devoluciones pendientes completadas');
+            }else{
+                return redirect()->route('devolucion.index')->with('status', 'No es un QR del sistema');
+            }
+        } catch (\Throwable $th) {
+            return redirect()->route('devolucion.index')->with('status', $th->getMessage());
+        }
     }
 }

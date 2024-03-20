@@ -379,4 +379,13 @@ class PrestamoController extends Controller
             echo $th->getMessage();
         }
     }
+    public function checkTablePrestamoIsNotEmpty(){
+        try {
+            $cant = DB::table('prestamo')->count();
+            if($cant>0){return true;}
+            else {return false;}
+        } catch (\Throwable $th) {
+            return false;
+        }
+    }
 }
