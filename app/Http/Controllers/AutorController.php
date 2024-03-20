@@ -58,4 +58,13 @@ class AutorController extends Controller
             return redirect()->route('autor.index')->with('status', $th->getMessage());
         }
     }
+    public function checkTableAutorIsNotEmpty(){
+        try {
+            $cant = DB::table('autor')->count();
+            if($cant>0){return true;}
+            else {return false;}
+        } catch (\Throwable $th) {
+            return false;
+        }
+    }
 }

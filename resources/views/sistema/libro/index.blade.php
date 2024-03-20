@@ -13,6 +13,7 @@ iname="Libros">
                     </button>
                 </div>
             @endif
+            @if (app(App\Http\Controllers\LibrosController::class)->checkTableLibroIsNotEmpty())
             <div class="input-group md-form form-sm form-2 pl-0">
                 <form action="{{ route('libro.index') }}" method="post" class="form-inline col-12 p-0">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -100,6 +101,9 @@ iname="Libros">
                 </table>
             </div>
         </div>
+        @else
+            <x-layouts.empty/>
+        @endif
         <div class="col-12 mb-3 " style="text-align: right; margin-left: 12px;">
             <div class="col-12 mr-4">
                 <div class="d-flex justify-content-end">
