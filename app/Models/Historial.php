@@ -9,6 +9,7 @@ class Historial extends Model
 {
     use HasFactory;
     protected $table = 'historial';
+    public $timestamps = false;
     protected $fillable = [
         'user_id',
         'fecha',

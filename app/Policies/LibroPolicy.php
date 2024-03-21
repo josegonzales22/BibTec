@@ -8,37 +8,22 @@ use Illuminate\Auth\Access\Response;
 
 class LibroPolicy
 {
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user)
-    {
-
-    }
-
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Libro $libro)
-    {
-
-    }
-
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user)
-    {
-
-    }
-    /**
-     * Determine whether the user can update the model.
-     */
     public function update(User $user, Libro $libro)
     {
-        if($user->roles->contains('slug', 'trabajador') && $user->permissions()->contains('slug', 'update-libro')){
-            return true;
-        }
+        return $user->roles->contains(function ($role) {
+            return $role->slug === 'trabajador';
+        }) && $user->permissions->contains(function ($permission) {
+            return $permission->slug === 'update-libro';
+        });
+        return false;
+    }
+    public function updateAutor(User $user)
+    {
+        return $user->roles->contains(function ($role) {
+            return $role->slug === 'trabajador';
+        }) && $user->permissions->contains(function ($permission) {
+            return $permission->slug === 'update-libro';
+        });
         return false;
     }
     public function checkUpdate(User $user){
@@ -80,15 +65,16 @@ class LibroPolicy
             return $permission->slug === 'create-libro';
         });
     }
-
     /**
      * Determine whether the user can delete the model.
      */
     public function delete(User $user)
     {
-        if($user->roles->contains('slug', 'trabajador') && $user->permissions()->contains('slug', 'delete-libro')){
-            return true;
-        }
+        return $user->roles->contains(function ($role) {
+            return $role->slug === 'trabajador';
+        }) && $user->permissions->contains(function ($permission) {
+            return $permission->slug === 'delete-libro';
+        });
         return false;
     }
 
