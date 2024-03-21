@@ -7,6 +7,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UsuarioController extends Controller
@@ -153,11 +154,15 @@ class UsuarioController extends Controller
     public function destroy($id)
     {
         try {
-            $user = User::findOrFail($id);
-            $user->roles()->detach();
-            $user->permissions()->detach();
-            $user->delete();
-            return redirect()->route('usuario.index')->with('status', 'Usuario eliminado correctamente');
+            if($id==Auth::user()->id){
+                return redirect()->route('usuario.index')->with('status', 'El usuario logueado no puede ser eliminado');
+            }else{
+                $user = User::findOrFail($id);
+                $user->roles()->detach();
+                $user->permissions()->detach();
+                $user->delete();
+                return redirect()->route('usuario.index')->with('status', 'Usuario eliminado correctamente');
+            }
         } catch (\Throwable $th) {
             return redirect()->route('usuario.index')->with('status', $th->getMessage());
         }
