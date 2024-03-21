@@ -2,6 +2,9 @@
 title2="Inicio"
 iname="Dashboard">
 <style>.d-icons{font-size:40px;color:whitesmoke;}</style>
+@section('js_chart')
+    <script src="{{ asset('js/chart.js') }}"></script>
+@endsection
 <main class="container-fluid">
     <div class="row">
         <div class="col-xl-3 col-md-6 mb-4">
@@ -110,4 +113,146 @@ iname="Dashboard">
         </div>
     </div>
 </main>
+<script>
+    var ctx1 = document.getElementById('graficoLibros').getContext('2d');
+    var myChart1 = new Chart(ctx1, {
+        type: 'line',
+        data: {
+            labels: [
+                @foreach($librosMasPrestados as $libro)
+                    "{{ $libro['id'] }}",
+                @endforeach
+            ],
+            datasets: [{
+                label: 'Cantidad de préstamos',
+                data: [
+                    @foreach($librosMasPrestados as $libro)
+                        {{ $libro['total_prestamos'] }},
+                    @endforeach
+                ],
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: false
+                },
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    ticks: {
+                        beginAtZero: true
+                    },
+                    title: {
+                        display: true,
+                        text: 'Cantidad de Préstamos'
+                    }
+                },
+                x:{
+                    title: {
+                        display: true,
+                        text: 'Id de libros'
+                    }
+                }
+            },
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+    var ctx2 = document.getElementById('graficoLibros2').getContext('2d');
+    var myChart2 = new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+            labels: [
+                @foreach($librosMasPrestados as $libro)
+                    "{{ $libro['titulo'] }}",
+                @endforeach
+            ],
+            datasets: [{
+                label: 'Cantidad de préstamos',
+                data: [
+                    @foreach($librosMasPrestados as $libro)
+                        {{ $libro['total_prestamos'] }},
+                    @endforeach
+                ],
+                backgroundColor: [
+                            'rgba(0, 123, 255, 0.7)',
+                            'rgba(108, 117, 125, 0.7)',
+                            'rgba(40, 167, 69, 0.7)',
+                            'rgba(220, 53, 69, 0.7)',
+                            'rgba(255, 193, 7, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(0, 123, 255, 1)',
+                            'rgba(108, 117, 125, 1)',
+                            'rgba(40, 167, 69, 1)',
+                            'rgba(220, 53, 69, 1)',
+                            'rgba(255, 193, 7, 1)'
+                        ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'right'
+                }
+            },
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    var ctx3 = document.getElementById('graficoPorcentaje').getContext('2d');
+    var myChart3 = new Chart(ctx3, {
+        type: 'pie',
+        data: {
+            labels: ['Con préstamos', 'Sin préstamos'],
+            datasets: [{
+                label: 'Porcentaje de estudiantes con préstamos',
+                data: [
+                    {{ $estudiantesConPrestamos / $totalEstudiantes * 100 }},
+                    {{ ($totalEstudiantes - $estudiantesConPrestamos) / $totalEstudiantes * 100 }}
+                ],
+                backgroundColor: [
+                    'rgba(40, 167, 69, 0.7)',
+                    'rgba(0, 123, 255, 0.7)'
+                ],
+                borderColor: [
+                    'rgba(40, 167, 69, 1)',
+                    'rgba(0, 123, 255, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += context.parsed + '%';
+                                return label;
+                            }
+                        }
+                    }
+                },
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+</script>
+
+<!-- Aquí sigue el resto de tu HTML -->
+
 </x-layouts.system>

@@ -5,6 +5,7 @@
         title="{{$title2 ?? ''}}">
     </x-layouts.head>
     @yield('css_tagsinput')
+    @yield('js_chart')
 </head>
 <body id="page-top">
     <!--
