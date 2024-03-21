@@ -71,10 +71,9 @@
                             <label for="text" class="col-form-label"><b>Nuevo usuario</b></label>
                         </div>
                         <div class="col-12">
-                            <label for="perfil_id" class="col-form-label">Perfil</label>
-                            <select name="perfil_id" id="perfil_id" class="form-select">
-                                <option value="1" selected>Trabajador</option>
-                                <option value="2">Estudiante</option>
+                            <label for="rol_id" class="col-form-label">Perfil</label>
+                            <select name="rol_id" id="rol_id" class="form-select">
+                                <option value="5" selected>Espectador</option>
                             </select>
                             @error('perfil_id')
                                 <span class="invalid-feedback" role="alert">

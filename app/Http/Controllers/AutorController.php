@@ -7,9 +7,17 @@ use App\Models\Autor;
 use App\Policies\LibroPolicy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\HistorialController;
+use DateTime;
+use Illuminate\Support\Facades\Auth;
 
 class AutorController extends Controller
 {
+    protected $historial;
+    public function __construct(HistorialController $historial)
+    {
+        $this->historial = $historial;
+    }
     public function index(Request $request){
         $user = auth()->user();
         $policy = new LibroPolicy();
@@ -34,11 +42,18 @@ class AutorController extends Controller
     }
     public function update(SaveAutorRequest $request, Autor $autor){
         try {
-            $this->authorize('update', $autor);
-            $autor = Autor::findOrFail($request->input('id'));
-            $autor->info = $request->input('info');
-            $autor->save();
-            return redirect()->route('autor.index')->with('status', 'Autor actualizado correctamente');
+            $user = auth()->user();
+            $policy = new LibroPolicy();
+            if($policy->updateAutor($user)){
+                $autor = Autor::findOrFail($request->input('id'));
+                $autor->info = $request->input('info');
+                $autor->save();
+                $fecha = new DateTime();
+                $this->historial->store(Auth::user()->id, $fecha, 'Autor actualizado', null);
+                return redirect()->route('autor.index')->with('status', 'Autor actualizado correctamente');
+            }else{
+                abort(403, 'No tienes permiso para esta operación');
+            }
         } catch (\Throwable $th) {
             return redirect()->route('autor.index')->with('status', $th->getMessage());
         }
@@ -48,8 +63,13 @@ class AutorController extends Controller
             $user = auth()->user();
             $policy = new LibroPolicy();
             if($policy->delete($user)){
-                $autor = Autor::findOrFail($id);
-                $autor->delete();
+                DB::beginTransaction();
+                    DB::table('libros_autor')->where('idAutor', $id)->delete();
+                    $autor = Autor::findOrFail($id);
+                    $autor->delete();
+                    $fecha = new DateTime();
+                    $this->historial->store(Auth::user()->id, $fecha, 'Autor eliminado', null);
+                DB::commit();
                 return redirect()->route('autor.index')->with('status', 'Autor eliminado correctamente');
             }else{
                 abort(403, 'No tienes permiso para esta operación');

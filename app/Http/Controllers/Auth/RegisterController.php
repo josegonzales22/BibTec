@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -49,16 +50,12 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            /*
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            */
             'dni' => ['required', 'string', 'max:8'],
             'nombres' => ['required', 'string', 'max:50'],
             'apellidos' => ['required', 'string', 'max:50'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'rol_id' => ['required']
         ]);
     }
 
@@ -68,20 +65,24 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \App\Models\User
      */
-    protected function create(array $data)
-    {
-        return User::create([
-            /*
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            */
-            'dni' => $data['dni'],
-            'nombres' => $data['nombres'],
-            'apellidos' => $data['apellidos'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'perfil_id' => $data['perfil_id'],
-        ]);
+    protected function create(array $data){
+        DB::beginTransaction();
+        try {
+            $user = User::create([
+                'dni' => $data['dni'],
+                'nombres' => $data['nombres'],
+                'apellidos' => $data['apellidos'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+            ]);
+            $idrole = $data['rol_id'];
+            $user->roles()->attach($idrole);
+            $user->save();
+            DB::commit();
+            return $user;
+        } catch (\Exception $e) {
+            DB::rollback();
+            throw $e;
+        }
     }
 }
