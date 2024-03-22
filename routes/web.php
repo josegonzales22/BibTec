@@ -84,3 +84,5 @@ Route::get('/devoluciones/escaner', [DevolucionController::class, 'escanerIndex'
 Route::post('/devoluciones/escaner/{cadena}', [DevolucionController::class, 'procesarInfoEscaner'])->name('devolucion.escaner.info')->middleware('can:isTrabOrProf');
 
 Route::get('/historial', [HistorialController::class, 'index'])->name('historial.index')->middleware('can:isAdmOrTrabOrProf');
+Route::post('/historial', [HistorialController::class, 'index'])->name('historial.index')->middleware('can:isAdmOrTrabOrProf');
+Route::post('/historial/report/{op}', [HistorialController::class, 'exportCSVInfo'])->name('historial.export')->middleware('can:isAdmOrTrabOrProf');
