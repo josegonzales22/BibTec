@@ -1,10 +1,8 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -437,6 +435,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        DB::table('users_permissions')->where('user_id', 1)->delete();
+        DB::table('roles_permissions')->whereBetween('role_id', [1, 5])->delete();
+        DB::table('users_roles')->where('user_id', 1)->delete();
+        DB::table('roles')->whereBetween('id',[1, 5])->delete();
+        DB::table('permissions')->whereBetween('id',[1, 19])->delete();
+        DB::table('users')->where('id', 1)->delete();
     }
 };

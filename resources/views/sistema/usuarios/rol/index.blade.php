@@ -17,7 +17,7 @@ iname="Roles">
                 </div>
             @endif
             <div class="input-group md-form form-sm form-2 pl-0">
-                <form action="" method="post" class="form-inline col-12 p-0">
+                <form action="{{ route('rol.index') }}" method="post" class="form-inline col-12 p-0">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <div class="input-group w-100">
                         <input class="form-control my-0 py-1 red-border" type="text" name="busquedaInput" placeholder="Buscar rol" aria-label="Search">

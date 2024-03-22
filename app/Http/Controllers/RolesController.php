@@ -14,7 +14,13 @@ class RolesController extends Controller
      */
     public function index(Request $request){
         $busqueda = $request->busquedaInput;
-        $roles = Role::with('permissions')->orderBy('id', 'desc')->paginate(5);
+        $roles = Role::with('permissions')
+        ->where(function($query) use ($busqueda) {
+            $query->where('name', 'LIKE', '%'.$busqueda.'%')
+                ->orWhere('slug', 'LIKE', '%'.$busqueda.'%');
+        })
+        ->orderBy('id', 'desc')
+        ->paginate(5);
         return view('sistema.usuarios.rol.index', ['roles' => $roles, 'busqueda' => $busqueda]);
     }
     public function create()

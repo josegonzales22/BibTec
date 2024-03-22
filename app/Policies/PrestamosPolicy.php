@@ -8,65 +8,35 @@ use Illuminate\Auth\Access\Response;
 
 class PrestamosPolicy
 {
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user)
-    {
-        //
-    }
+    public function create(User $user){
+        $allowedRoles = ['trabajador', 'profesor'];
+        $requiredPermissions = ['create-prestamo'];
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Prestamo $prestamo)
-    {
-        //
-    }
+        $hasAllowedRole = $user->roles()->contains(function ($role) use ($allowedRoles){
+            return in_array($role->slug, $allowedRoles);
+        });
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user)
-    {
-        //
-    }
+        $hasRequiredPermissions = $user->permissions()->contains(function ($permission) use ($requiredPermissions){
+            return in_array($permission->slug, $requiredPermissions);
+        });
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, Prestamo $prestamo)
-    {
-        //
+        return $hasAllowedRole && $hasRequiredPermissions;
     }
+    public function read(User $user) {
+        $allowedRoles = ['admin', 'trabajador', 'profesor'];
+        $requiredPermissions = ['read-prestamo'];
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, Prestamo $prestamo)
-    {
-        //
+        $roles = $user->roles()->pluck('slug')->toArray();
+        $permissions = $user->permissions()->pluck('slug')->toArray();
+
+        $hasAllowedRole = !empty(array_intersect($roles, $allowedRoles));
+        $hasRequiredPermissions = !empty(array_intersect($permissions, $requiredPermissions));
+
+        return $hasAllowedRole && $hasRequiredPermissions;
     }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Prestamo $prestamo)
-    {
-        //
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Prestamo $prestamo)
-    {
-        //
-    }
-
-    public function userIsEstudent(User $user){
-        return $user->roles->contains(function ($role) {
-            return $role->slug === 'estudiante';
+    public function baul(User $user){
+        return $user->permissions->contains(function ($permission) {
+            return $permission->slug === 'baul';
         });
     }
 }
