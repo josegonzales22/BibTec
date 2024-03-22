@@ -78,16 +78,16 @@
             Mis registros
         </div>
         <li class="nav-item">
-            <a class="nav-link"
-            href="">
-                <i class="fa-solid fa-folder-plus"></i>
+            <a class="nav-link {{ request()->routeIs('prestamos.index.estudiante') ? 'text-light fw-bolder' : '' }}"
+            href="{{ route('prestamos.index.estudiante') }}">
+                <i class="fa-solid fa-folder-plus {{ request()->routeIs('prestamos.index.estudiante') ? 'text-light' : '' }}"></i>
                 <span>Préstamos</span>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link"
-            href="">
-                <i class="fa-solid fa-folder-minus"></i>
+            <a class="nav-link {{ request()->routeIs('devoluciones.index.estudiante') ? 'text-light fw-bolder' : '' }}"
+            href="{{ route('devoluciones.index.estudiante') }}">
+                <i class="fa-solid fa-folder-minus {{ request()->routeIs('devoluciones.index.estudiante') ? 'text-light' : '' }}"></i>
                 <span>Devoluciones</span>
             </a>
         </li>

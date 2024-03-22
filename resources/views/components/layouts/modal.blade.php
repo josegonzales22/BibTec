@@ -14,9 +14,9 @@
             <div class="modal-body">Seleccione "salir" para cerrar la sesión actual.</div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
-                <a class="btn btn-primary"  href="{{ route('logout') }}"
+                <a class="btn btn-a"  href="{{ route('logout') }}"
                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                style="background-color: #816af3" >Salir</a>
+                 >Salir</a>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                     @csrf
                 </form>

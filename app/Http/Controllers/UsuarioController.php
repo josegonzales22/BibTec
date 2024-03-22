@@ -29,6 +29,31 @@ class UsuarioController extends Controller
         ->paginate(5);
         return view('sistema.usuarios.index', ['usuarios' => $usuarios, 'busqueda' => $busqueda]);
     }
+    public function indexPerfil($id){
+        $usuario = User::findOrFail($id);
+        return view('sistema.perfil', ['usuario' => $usuario]);
+    }
+    public function updatePerfil(Request $request){
+        $validator = $request->validate([
+            'idUser' => ['required','numeric'],
+            'dni' => ['required','numeric','digits:8'],
+            'nombres' => ['required','string','max:50'],
+            'apellidos' => ['required','string','max:50'],
+            'email' => ['required','max:255','email'],
+        ]);
+
+        try {
+            $user = User::findOrFail($request->idUser);
+            $user->nombres = $request->nombres;
+            $user->apellidos = $request->apellidos;
+            $user->dni = $request->dni;
+            $user->email = $request->email;
+            $user->save();
+            return redirect()->route('usuario.perfil', ['id'=>Auth::user()->id])->with('status', 'Usuario actualizado correctamente');
+        } catch (\Throwable $th) {
+            return redirect()->route('usuario.perfil', ['id'=>Auth::user()->id])->with('status', $th->getMessage());
+        }
+    }
 
 
     /**
