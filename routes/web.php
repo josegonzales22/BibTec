@@ -3,6 +3,7 @@
 use App\Http\Controllers\AutorController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DevolucionController;
+use App\Http\Controllers\EstudianteController;
 use App\Http\Controllers\HistorialController;
 use App\Http\Controllers\LibrosController;
 use App\Http\Controllers\PrestamoController;
@@ -86,3 +87,12 @@ Route::post('/devoluciones/escaner/{cadena}', [DevolucionController::class, 'pro
 Route::get('/historial', [HistorialController::class, 'index'])->name('historial.index')->middleware('can:isAdmOrTrabOrProf');
 Route::post('/historial', [HistorialController::class, 'index'])->name('historial.index')->middleware('can:isAdmOrTrabOrProf');
 Route::post('/historial/report/{op}', [HistorialController::class, 'exportCSVInfo'])->name('historial.export')->middleware('can:isAdmOrTrabOrProf');
+
+Route::get('/prestamos/estudiante', [EstudianteController::class, 'indexPrestamos'])->name('prestamos.index.estudiante')->middleware('can:isEstudiante');
+Route::post('/prestamos/estudiante', [EstudianteController::class, 'indexPrestamos'])->name('prestamos.index.estudiante')->middleware('can:isEstudiante');
+
+Route::get('/devoluciones/estudiante', [EstudianteController::class, 'indexDevoluciones'])->name('devoluciones.index.estudiante')->middleware('can:isEstudiante');
+Route::post('/devoluciones/estudiante', [EstudianteController::class, 'indexDevoluciones'])->name('devoluciones.index.estudiante')->middleware('can:isEstudiante');
+
+Route::get('/perfil/{id}', [UsuarioController::class, 'indexPerfil'])->name('usuario.perfil')->middleware('auth');
+Route::post('/perfil', [UsuarioController::class, 'updatePerfil'])->name('usuario.perfil.save')->middleware('auth');

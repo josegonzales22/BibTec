@@ -64,7 +64,7 @@ class UsuarioPolicy
     }
     public function devolucionEstudiante(User $user){
         return $user->roles->contains(function ($role) {
-            return $role->slug === 'admin';
+            return $role->slug === 'estudiante';
         }) && $user->permissions->contains(function ($permission) {
             return $permission->slug === 'devolucion-estudiante';
         });

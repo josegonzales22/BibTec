@@ -8,13 +8,6 @@
     @yield('js_chart')
 </head>
 <body id="page-top">
-    <!--
-    <div class="justify-content-center align-items-center" style="height: 100vh; display:flex;" id="loader">
-        <div class="spinner-border " role="status" >
-            <span class="sr-only">Loading...</span>
-        </div>
-    </div>
--->
     <div id="wrapper">
         <x-layouts.nav-trab/>
         <div id="content-wrapper" class="d-flex flex-column">
