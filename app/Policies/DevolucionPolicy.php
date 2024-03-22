@@ -2,9 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Devolucion;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class DevolucionPolicy
 {
@@ -12,13 +10,11 @@ class DevolucionPolicy
         $allowedRoles = ['trabajador', 'profesor'];
         $requiredPermissions = ['create-devolucion'];
 
-        $hasAllowedRole = $user->roles()->contains(function ($role) use ($allowedRoles){
-            return in_array($role->slug, $allowedRoles);
-        });
+        $roles = $user->roles()->pluck('slug')->toArray();
+        $permissions = $user->permissions()->pluck('slug')->toArray();
 
-        $hasRequiredPermissions = $user->permissions()->contains(function ($permission) use ($requiredPermissions){
-            return in_array($permission->slug, $requiredPermissions);
-        });
+        $hasAllowedRole = !empty(array_intersect($roles, $allowedRoles));
+        $hasRequiredPermissions = !empty(array_intersect($permissions, $requiredPermissions));
 
         return $hasAllowedRole && $hasRequiredPermissions;
     }

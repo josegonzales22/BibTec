@@ -1,5 +1,11 @@
 @import url('reset.css');
 
+a.text-system{
+    color: #816AFD;
+}
+a.text-system:hover{
+    color: #9a8af5;
+}
 button{
     padding-left: 1rem;
     padding-right: 1rem;
