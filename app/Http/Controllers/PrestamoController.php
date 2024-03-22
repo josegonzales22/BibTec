@@ -5,78 +5,112 @@ namespace App\Http\Controllers;
 use App\Models\Plantilla;
 use App\Models\Prestamo;
 use App\Models\User;
+use App\Policies\LibroPolicy;
 use App\Policies\PrestamosPolicy;
 use Carbon\Carbon;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class PrestamoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $historial;
+    public function __construct(HistorialController $historial)
+    {
+        $this->historial = $historial;
+    }
     public function index(Request $request)
     {
-        $busqueda = $request->busquedaInput;
-        $prestamos = DB::table('prestamo as P')
-            ->selectRaw('P.id, CONCAT(U.nombres, " ", U.apellidos) AS estudiante, L.titulo, P.cantidad, P.f_prestamo, P.estado')
-            ->join('users as U', 'P.idUser', '=', 'U.id')
-            ->join('libros as L', 'P.idLibro', '=', 'L.id')
-            ->where(function($query) use($busqueda){
-                $query->where('U.nombres', 'LIKE','%'.$busqueda.'%')
-                ->orWhere('U.apellidos', 'LIKE','%'.$busqueda.'%')
-                ->orWhere('L.titulo', 'LIKE', '%'.$busqueda.'%')
-                ->orWhere('P.cantidad', 'LIKE', '%'.$busqueda.'%')
-                ->orWhere('P.f_prestamo', 'LIKE', '%'.$busqueda.'%')
-                ->orWhere('P.estado', 'LIKE', '%'.$busqueda.'%');
-            })
-            ->orderBy('P.id')
-            ->paginate(5);
-        return view('sistema.prestamo.index', ['prestamos' => $prestamos, 'busqueda' => $busqueda]);
+        $user = auth()->user();
+        $policy = new PrestamosPolicy;
+        if($policy->read($user)){
+            $busqueda = $request->busquedaInput;
+            $prestamos = DB::table('prestamo as P')
+                ->selectRaw('P.id, CONCAT(U.nombres, " ", U.apellidos) AS estudiante, L.titulo, P.cantidad, P.f_prestamo, P.estado')
+                ->join('users as U', 'P.idUser', '=', 'U.id')
+                ->join('libros as L', 'P.idLibro', '=', 'L.id')
+                ->where(function($query) use($busqueda){
+                    $query->where('U.nombres', 'LIKE','%'.$busqueda.'%')
+                    ->orWhere('U.apellidos', 'LIKE','%'.$busqueda.'%')
+                    ->orWhere('L.titulo', 'LIKE', '%'.$busqueda.'%')
+                    ->orWhere('P.cantidad', 'LIKE', '%'.$busqueda.'%')
+                    ->orWhere('P.f_prestamo', 'LIKE', '%'.$busqueda.'%')
+                    ->orWhere('P.estado', 'LIKE', '%'.$busqueda.'%');
+                })
+                ->orderBy('P.id')
+                ->paginate(5);
+            return view('sistema.prestamo.index', ['prestamos' => $prestamos, 'busqueda' => $busqueda]);
+        }else{
+            return redirect()->route('dashboard');
+        }
     }
 
     public function viewBaul(){
-        $libros = DB::table('libros as L')
-            ->select('L.id', 'L.titulo', 'L.genero','L.numpag','L.idioma')
-            ->join('baul_pres as BP', 'L.id', '=','BP.idLibro')
-            ->orderBy('L.id')
-            ->get();
-        return view('sistema.prestamo.baul',['libros' => $libros]);
+        try {
+            $user = auth()->user();
+            $policy = new PrestamosPolicy;
+            if($policy->baul($user)){
+                $libros = DB::table('libros as L')
+                ->select('L.id', 'L.titulo', 'L.genero','L.numpag','L.idioma')
+                ->join('baul_pres as BP', 'L.id', '=','BP.idLibro')
+                ->orderBy('L.id')
+                ->get();
+                return view('sistema.prestamo.baul',['libros' => $libros]);
+            }else{
+                abort(403, 'No tienes permiso para esta operación');
+            }
+        } catch (\Throwable $th) {
+            return redirect()->route('prestamo.index')->with('status', $th->getMessage());
+        }
     }
     public function viewListPlantillas(Request $request){
-        $plantillas = Plantilla::leftJoin('plantilla_libro', 'plantilla.id', '=', 'plantilla_libro.plantilla_id')
-            ->select('plantilla.*')
-            ->withCount('libros')
-            ->groupBy('plantilla.id')
-            ->orderBy('plantilla.id')
-            ->get();
-        return view('sistema.prestamo.plantillas.index', ['plantillas' => $plantillas]);
+        try {
+            $user = auth()->user();
+            $policy = new PrestamosPolicy;
+            if($policy->read($user)){
+                $plantillas = Plantilla::leftJoin('plantilla_libro', 'plantilla.id', '=', 'plantilla_libro.plantilla_id')
+                ->select('plantilla.*')
+                ->withCount('libros')
+                ->groupBy('plantilla.id')
+                ->orderBy('plantilla.id')
+                ->get();
+                return view('sistema.prestamo.plantillas.index', ['plantillas' => $plantillas]);
+            }else{
+                abort(403, 'No tienes permiso para esta operación');
+            }
+        } catch (\Throwable $th) {
+            return redirect()->route('prestamo.index')->with('status', $th->getMessage());
+        }
     }
     public function viewPlantilla($id){
         try {
-            $plantilla = Plantilla::findOrFail($id);
-            return view('sistema.prestamo.plantillas.view', ['plantilla' => $plantilla]);
+            $user = auth()->user();
+            $policy = new PrestamosPolicy;
+            if($policy->read($user)){
+                $plantilla = Plantilla::findOrFail($id);
+                return view('sistema.prestamo.plantillas.view', ['plantilla' => $plantilla]);
+            }else{
+                abort(403, 'No tienes permiso para esta operación');
+            }
         } catch (\Throwable $th) {
             return redirect()->route('plantilla.index')->with('status', $th->getMessage());
         }
     }
     public function editPlantilla($id){
         try {
-            $plantilla = Plantilla::findOrFail($id);
-            return view('sistema.prestamo.plantillas.edit', ['plantilla' => $plantilla]);
+            $user = auth()->user();
+            $policy = new PrestamosPolicy;
+            if($policy->create($user)){
+                $plantilla = Plantilla::findOrFail($id);
+                return view('sistema.prestamo.plantillas.edit', ['plantilla' => $plantilla]);
+            }else{
+                abort(403, 'No tienes permiso para esta operación');
+            }
         } catch (\Throwable $th) {
             return redirect()->route('plantilla.index')->with('status', $th->getMessage());
         }
     }
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     public function checkUserIsStudent($dni){
         $usuario = User::where('dni', $dni)->first();
         if($usuario && $usuario->roles->contains('slug', 'estudiante')){
@@ -89,41 +123,45 @@ class PrestamoController extends Controller
         $usuario = User::where('dni', $dni)->value('id');
         return $usuario;
     }
-
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         try {
-            if($this->checkUserIsStudent($request->dniEstudiante)){
-                $idU=$this->obtainIdStudent($request->dniEstudiante);
-                if($idU){
-                    echo $idU;
-                    $libros = DB::table('baul_pres')
-                    ->where('idUser', Auth::user()->id)
-                    ->get();
-                    $fAct = Carbon::now();
-                    foreach ($libros as $libro) {
-                        Prestamo::create([
-                            'idUser' => $idU,
-                            'idLibro' => $libro->idLibro,
-                            'cantidad' => 1,
-                            'f_prestamo' => $fAct,
-                            'estado' => 'Pendiente'
-                        ]);
-                        $this->deleteFromBaul(Auth::user()->id, $libro->idLibro);
+            $user = auth()->user();
+            $policy = new PrestamosPolicy;
+            if($policy->create($user)){
+                if($this->checkUserIsStudent($request->dniEstudiante)){
+                    $idU=$this->obtainIdStudent($request->dniEstudiante);
+                    if($idU){
+                        echo $idU;
+                        $libros = DB::table('baul_pres')
+                        ->where('idUser', Auth::user()->id)
+                        ->get();
+                        $fAct = Carbon::now();
+                        foreach ($libros as $libro) {
+                            DB::beginTransaction();
+                                Prestamo::create([
+                                    'idUser' => $idU,
+                                    'idLibro' => $libro->idLibro,
+                                    'cantidad' => 1,
+                                    'f_prestamo' => $fAct,
+                                    'estado' => 'Pendiente'
+                                ]);
+                                $this->deleteFromBaul(Auth::user()->id, $libro->idLibro);
+                                $fecha = new DateTime();
+                                $this->historial->store(Auth::user()->id, $fecha, 'Préstamo de libro completado', $libro->idLibro);
+                            DB::commit();
+                        }
+                        return redirect()->route('prestamo.index')
+                        ->with('status', 'Préstamo completado exitosamente');
+                    }else{
+                        return redirect()->route('prestamo.index')
+                        ->with('status', 'El usuario no existe o no tiene el rol de estudiante');
                     }
-                    return redirect()->route('prestamo.index')
-                    ->with('status', 'Préstamo completado exitosamente');
                 }else{
                     return redirect()->route('prestamo.index')
                     ->with('status', 'El usuario no existe o no tiene el rol de estudiante');
                 }
             }else{
-                return redirect()->route('prestamo.index')
-                ->with('status', 'El usuario no existe o no tiene el rol de estudiante');
+                abort(403, 'No tienes permiso para esta operación');
             }
         } catch (\Throwable $th) {
             return redirect()->route('prestamo.index')
@@ -151,57 +189,45 @@ class PrestamoController extends Controller
     }
     public function savePlantilla(Request $request){
         try {
-            $request->validate(['plantillaName' => 'required|max:50']);
-            if($this->countPlantillas()){
-                if($this->checkNamePlantilla($request->plantillaName)){
-                    return redirect()->route('plantilla.index')->with('status', 'La plantilla ingresada ya existe');
+            $user = auth()->user();
+            $policy = new LibroPolicy;
+            if($policy->create($user)){
+                $request->validate(['plantillaName' => 'required|max:50']);
+                if($this->countPlantillas()){
+                    if($this->checkNamePlantilla($request->plantillaName)){
+                        return redirect()->route('plantilla.index')->with('status', 'La plantilla ingresada ya existe');
+                    }else{
+                        DB::beginTransaction();
+                            Plantilla::create(['nombre' => $request->plantillaName]);
+                            $fecha = new DateTime();
+                            $this->historial->store(Auth::user()->id, $fecha, 'Plantilla creada', null);
+                        DB::commit();
+                    }
                 }else{
-                    Plantilla::create(['nombre' => $request->plantillaName]);
+                    return redirect()->route('plantilla.index')->with('status', 'El límite es 10 plantillas');
                 }
-
+                return redirect()->route('plantilla.index')->with('status', 'Plantilla registrada exitosamente');
             }else{
-                return redirect()->route('plantilla.index')->with('status', 'El límite es 10 plantillas');
+                abort(403, 'No tienes permiso para esta operación');
             }
-            return redirect()->route('plantilla.index')->with('status', 'Plantilla registrada exitosamente');
         } catch (\Throwable $th) {
             return redirect()->route('plantilla.index')->with('status', $th->getMessage());
         }
     }
-    /**
-     * Display the specified resource.
-     */
-    public function show(Prestamo $prestamo)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Prestamo $prestamo)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Prestamo $prestamo)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Prestamo $prestamo)
-    {
-        //
-    }
     public function destroyPlantilla(Plantilla $plantilla){
         try {
-            $plantilla->delete();
-            return redirect()->route('plantilla.index')->with('status', 'Plantilla eliminada exitosamente');
+            $user = auth()->user();
+            $policy = new LibroPolicy;
+            if($policy->create($user)){
+                DB::beginTransaction();
+                    $plantilla->delete();
+                    $fecha = new DateTime();
+                    $this->historial->store(Auth::user()->id, $fecha, 'Plantilla eliminada', null);
+                DB::commit();
+                return redirect()->route('plantilla.index')->with('status', 'Plantilla eliminada exitosamente');
+            }else{
+                abort(403, 'No tienes permiso para esta operación');
+            }
         } catch (\Throwable $th) {
             return redirect()->route('plantilla.index')->with('status', $th->getMessage());
         }
@@ -216,9 +242,9 @@ class PrestamoController extends Controller
     public function deleteFromBaul($idUser, $idBook){
         try {
             DB::table('baul_pres')
-            ->where('idUser', $idUser)
-            ->where('idLibro', $idBook)
-            ->delete();
+                ->where('idUser', $idUser)
+                ->where('idLibro', $idBook)
+                ->delete();
             $this->removeReservaStockLibro($idBook);
             return redirect()->route('prestamo.baul')->with('status', 'Libro eliminado del baúl');
         } catch (\Throwable $th) {
@@ -247,21 +273,41 @@ class PrestamoController extends Controller
     }
     public function updateNombrePlantilla(Request $request){
         try {
-            $p = Plantilla::findOrFail($request->idP);
-            $p->nombre=$request->nombreP;
-            $p->save();
-            return redirect()->route('plantilla.edit', ['plantilla'=>$request->idP])->with('status', 'Plantilla modificada correctamente');
+            $user = auth()->user();
+            $policy = new LibroPolicy;
+            if($policy->update($user)){
+                DB::beginTransaction();
+                    $p = Plantilla::findOrFail($request->idP);
+                    $p->nombre=$request->nombreP;
+                    $p->save();
+                    $fecha = new DateTime();
+                    $this->historial->store(Auth::user()->id, $fecha, 'Nombre de plantilla actualizada', null);
+                DB::commit();
+                return redirect()->route('plantilla.edit', ['plantilla'=>$request->idP])->with('status', 'Plantilla modificada correctamente');
+            }else{
+                abort(403, 'No tienes permiso para esta operación');
+            }
         } catch (\Throwable $th) {
             return redirect()->route('plantilla.edit', ['plantilla'=>$request->idP])->with('status', $th->getMessage());
         }
     }
     public function removeLibroFromPlantilla($plantilla, $libro){
         try {
-            DB::table('plantilla_libro')
-                ->where('plantilla_id', $plantilla)
-                ->where('libro_id',$libro)
-                ->delete();
-            return redirect()->route('plantilla.edit', ['plantilla' => $plantilla])->with('status', 'Libro eliminado de la plantilla');
+            $user = auth()->user();
+            $policy = new LibroPolicy;
+            if($policy->delete($user)){
+                DB::beginTransaction();
+                    DB::table('plantilla_libro')
+                    ->where('plantilla_id', $plantilla)
+                    ->where('libro_id',$libro)
+                    ->delete();
+                    $fecha = new DateTime();
+                    $this->historial->store(Auth::user()->id, $fecha, 'Libro eliminado de plantilla', $libro);
+                DB::commit();
+                return redirect()->route('plantilla.edit', ['plantilla' => $plantilla])->with('status', 'Libro eliminado de la plantilla');
+            }else{
+                abort(403, 'No tienes permiso para esta operación');
+            }
         } catch (\Throwable $th) {
             return redirect()->route('plantilla.edit', ['plantilla'=>$plantilla])->with('status', $th->getMessage());
         }
@@ -288,20 +334,26 @@ class PrestamoController extends Controller
     }
     public function usePlantilla(Plantilla $plantilla){
         try {
-            if(!$this->verBaulVacio(Auth::user()->id)){
-                if($this->verLibrosEnPlantilla($plantilla->id)){
-                    foreach($plantilla->libros as $libro){
-                        DB::table('baul_pres')->insert([
-                        'idUser' => Auth::user()->id,
-                        'idLibro' => $libro->id
-                        ]);
+            $user = auth()->user();
+            $policy = new PrestamosPolicy;
+            if($policy->create($user)){
+                if(!$this->verBaulVacio(Auth::user()->id)){
+                    if($this->verLibrosEnPlantilla($plantilla->id)){
+                        foreach($plantilla->libros as $libro){
+                            DB::table('baul_pres')->insert([
+                            'idUser' => Auth::user()->id,
+                            'idLibro' => $libro->id
+                            ]);
+                        }
+                        return redirect()->route('prestamo.baul');
+                    }else{
+                        return redirect()->route('plantilla.index')->with('status', 'La plantilla no contiene libros');
                     }
-                    return redirect()->route('prestamo.baul');
                 }else{
-                    return redirect()->route('plantilla.index')->with('status', 'La plantilla no contiene libros');
+                    return redirect()->route('plantilla.index')->with('status', 'El baúl no esta vacío');
                 }
             }else{
-                return redirect()->route('plantilla.index')->with('status', 'El baúl no esta vacío');
+                abort(403, 'No tienes permiso para esta operación');
             }
         } catch (\Throwable $th) {
             return redirect()->route('plantilla.index')->with('status', $th->getMessage());
@@ -348,7 +400,7 @@ class PrestamoController extends Controller
             $user = User::where('dni', $dni)->firstOrFail();
             if($user){
                 $policy = new PrestamosPolicy();
-                if($policy->userIsEstudent($user)){
+                if($policy->create($user)){
                     $prestamos = Prestamo::where('idUser', $user->id)
                                         ->where('estado', 'Pendiente')
                                         ->where('f_prestamo', $fecha)

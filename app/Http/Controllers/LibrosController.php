@@ -8,17 +8,22 @@ use App\Models\Libro;
 use App\Models\LibrosAutor;
 use App\Models\Plantilla;
 use App\Policies\LibroPolicy;
-use Illuminate\Auth\Access\AuthorizationException;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class LibrosController extends Controller
 {
+    protected $historial;
+    public function __construct(HistorialController $historial)
+    {
+        $this->historial = $historial;
+    }
     public function index(Request $request){
         $user = auth()->user();
         $policy = new LibroPolicy();
-        if($policy->checkRead($user)){
+        if($policy->read($user)){
             $busqueda = $request->busquedaInput;
             $libros2 = Libro::select('libros.*', DB::raw('GROUP_CONCAT(autor.info SEPARATOR "; ") AS Autores'))
                 ->leftJoin('libros_autor', 'libros.id', '=', 'libros_autor.idLibro')
@@ -53,7 +58,7 @@ class LibrosController extends Controller
         try {
             $user = auth()->user();
             $policy = new LibroPolicy();
-            if($policy->checkCreateLibro($user)){
+            if($policy->create($user)){
                 $titulo = $request->input('titulo');
                 $editorial = $request->input('editorial');
                 $pub = $request->input('pub');
@@ -72,16 +77,19 @@ class LibrosController extends Controller
                 ]);
                 $libroId = $libro->id;
                 $autoresIds = [];
-
                 $autores = $request->input('autores');
                 if ($autores !== null) {
-                    foreach ($autores as $info) {
-                        $autor = Autor::firstOrcreate(['info' => $info]);
-                        $autoresIds[] = $autor->id;
-                    }
-                    foreach ($autoresIds as $autorId) {
-                        LibrosAutor::create(['idLibro' => $libroId,'idAutor' => $autorId]);
-                    }
+                    DB::beginTransaction();
+                        foreach ($autores as $info) {
+                            $autor = Autor::firstOrcreate(['info' => $info]);
+                            $autoresIds[] = $autor->id;
+                        }
+                        foreach ($autoresIds as $autorId) {
+                            LibrosAutor::create(['idLibro' => $libroId,'idAutor' => $autorId]);
+                        }
+                        $fecha = new DateTime();
+                        $this->historial->store(Auth::user()->id, $fecha, 'Libro registrado', null);
+                    DB::commit();
                     return redirect()->route('libro.index')->with('status', 'Libro registrado correctamente');
                 }
             }else{
@@ -98,16 +106,25 @@ class LibrosController extends Controller
     }
     public function update(SaveLibroRequest $request, Libro $libro){
         try {
-            $this->authorize('update', $libro);
-            $libro->titulo = $request->input('titulo');
-            $libro->editorial = $request->input('editorial');
-            $libro->pub = $request->input('pub');
-            $libro->genero = $request->input('genero');
-            $libro->numpag = $request->input('numpag');
-            $libro->idioma = $request->input('idioma');
-            $libro->cantidad = $request->input('cantidad');
-            $libro->save();
-            return redirect()->route('libro.index')->with('status', 'Libro actualizado correctamente');
+            $user = auth()->user();
+            $policy = new LibroPolicy();
+            if($policy->update($user)){
+                DB::beginTransaction();
+                    $libro->titulo = $request->input('titulo');
+                    $libro->editorial = $request->input('editorial');
+                    $libro->pub = $request->input('pub');
+                    $libro->genero = $request->input('genero');
+                    $libro->numpag = $request->input('numpag');
+                    $libro->idioma = $request->input('idioma');
+                    $libro->cantidad = $request->input('cantidad');
+                    $libro->save();
+                    $fecha = new DateTime();
+                    $this->historial->store(Auth::user()->id, $fecha, 'Libro actualizado', $libro->id);
+                DB::commit();
+                return redirect()->route('libro.index')->with('status', 'Libro actualizado correctamente');
+            }else{
+                abort(403, 'No tienes permiso para esta operación');
+            }
         } catch (\Throwable $th) {
             return redirect()->route('libro.index')->with('status', $th->getMessage());
         }
@@ -117,8 +134,12 @@ class LibrosController extends Controller
             $user = auth()->user();
             $policy = new LibroPolicy();
             if($policy->delete($user)){
-                $libro = Libro::findOrFail($id);
-                $libro->delete();
+                DB::beginTransaction();
+                    $libro = Libro::findOrFail($id);
+                    $libro->delete();
+                    $fecha = new DateTime();
+                    $this->historial->store(Auth::user()->id, $fecha, 'Libro eliminado', null);
+                DB::commit();
                 return redirect()->route('libro.index')->with('status', 'Libro eliminado correctamente');
             }else{
                 abort(403, 'No tienes permiso para esta operación');
@@ -129,22 +150,32 @@ class LibrosController extends Controller
     }
     public function addToPlantilla(Request $request){
         try {
-            if($request->plantilla!=0){
-                if($this->checkLibroExistsInPlantilla($request->idLibro, $request->plantilla)){
-                    return redirect()->route('libro.index')->with('status', 'El libro ya existe en la plantilla');
-                }else{
-                    if($this->checkCantLibrosInPlantilla($request->plantilla)){
-                        DB::table('plantilla_libro')->insert([
-                            'plantilla_id' => $request->plantilla,
-                            'libro_id' => $request->idLibro
-                        ]);
-                        return redirect()->route('libro.index')->with('status', 'Libro agregado a la plantilla');
+            $user = auth()->user();
+            $policy = new LibroPolicy();
+            if($policy->create($user)){
+                if($request->plantilla!=0){
+                    if($this->checkLibroExistsInPlantilla($request->idLibro, $request->plantilla)){
+                        return redirect()->route('libro.index')->with('status', 'El libro ya existe en la plantilla');
                     }else{
-                        return redirect()->route('libro.index')->with('status', 'Límite de libros alcanzado en la plantilla');
+                        if($this->checkCantLibrosInPlantilla($request->plantilla)){
+                            DB::beginTransaction();
+                                DB::table('plantilla_libro')->insert([
+                                    'plantilla_id' => $request->plantilla,
+                                    'libro_id' => $request->idLibro
+                                ]);
+                                $fecha = new DateTime();
+                                $this->historial->store(Auth::user()->id, $fecha, 'Libro agregado a plantilla', $request->idLibro);
+                            DB::commit();
+                            return redirect()->route('libro.index')->with('status', 'Libro agregado a la plantilla');
+                        }else{
+                            return redirect()->route('libro.index')->with('status', 'Límite de libros alcanzado en la plantilla');
+                        }
                     }
+                }else{
+                    return redirect()->route('libro.index')->with('status', 'Por favor, seleccione una plantilla');
                 }
             }else{
-                return redirect()->route('libro.index')->with('status', 'Por favor, seleccione una plantilla');
+                abort(403, 'No tienes permiso para esta operación');
             }
         } catch (\Throwable $th) {
             return redirect()->route('libro.index')->with('status', $th->getMessage());
@@ -201,21 +232,27 @@ class LibrosController extends Controller
     }
     public function addToBaul($idUser, $idBook){
         try {
-            if($this->verCantBaulLibro($idUser)<10){
-                if($this->verStockLibro($idBook)>0){
-                    $this->reservarLibro($idBook);
-                    DB::table('baul_pres')->insert([
-                        'idUser' => $idUser,
-                        'idLibro' => $idBook
-                    ]);
-                    return redirect()->route('libro.index')->with('status', 'Libro agregado al baúl');
+            $user = auth()->user();
+            $policy = new LibroPolicy;
+            if($policy->baul($user)){
+                if($this->verCantBaulLibro($idUser)<10){
+                    if($this->verStockLibro($idBook)>0){
+                        $this->reservarLibro($idBook);
+                        DB::table('baul_pres')->insert([
+                            'idUser' => $idUser,
+                            'idLibro' => $idBook
+                        ]);
+                        return redirect()->route('libro.index')->with('status', 'Libro agregado al baúl');
+                    }else{
+                        return redirect()->route('libro.index')->with('status', 'No hay stock del libro');
+                    }
+                }else if($this->verCantBaulLibro($idUser, $idBook)==-1){
+                    return redirect()->route('libro.index')->with('status', 'Ocurrió un problema');
                 }else{
-                    return redirect()->route('libro.index')->with('status', 'No hay stock del libro');
+                    return redirect()->route('libro.index')->with('status', 'No es posible agregar más libros al baúl');
                 }
-            }else if($this->verCantBaulLibro($idUser, $idBook)==-1){
-                return redirect()->route('libro.index')->with('status', 'Ocurrió un problema');
             }else{
-                return redirect()->route('libro.index')->with('status', 'No es posible agregar más libros al baúl');
+                abort(403, 'No tienes permiso para esta operación');
             }
         } catch (\Throwable $th) {
             return redirect()->route('libro.index')->with('status', $th->getMessage());

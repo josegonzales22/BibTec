@@ -211,16 +211,17 @@ iname="Dashboard">
     });
 
     var ctx3 = document.getElementById('graficoPorcentaje').getContext('2d');
+    var totalEstudiantes = {{ $totalEstudiantes }};
+    var estudiantesConPrestamos = {{ $estudiantesConPrestamos }};
+    var porcentajeConPrestamos = totalEstudiantes !== 0 ? estudiantesConPrestamos / totalEstudiantes * 100 : 0;
+    var porcentajeSinPrestamos = totalEstudiantes !== 0 ? (totalEstudiantes - estudiantesConPrestamos) / totalEstudiantes * 100 : 0;
     var myChart3 = new Chart(ctx3, {
         type: 'pie',
         data: {
             labels: ['Con préstamos', 'Sin préstamos'],
             datasets: [{
                 label: 'Porcentaje de estudiantes con préstamos',
-                data: [
-                    {{ $estudiantesConPrestamos / $totalEstudiantes * 100 }},
-                    {{ ($totalEstudiantes - $estudiantesConPrestamos) / $totalEstudiantes * 100 }}
-                ],
+                data: [porcentajeConPrestamos, porcentajeSinPrestamos],
                 backgroundColor: [
                     'rgba(40, 167, 69, 0.7)',
                     'rgba(0, 123, 255, 0.7)'
@@ -233,20 +234,20 @@ iname="Dashboard">
             }]
         },
         options: {
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                var label = context.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
-                                label += context.parsed + '%';
-                                return label;
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            var label = context.label || '';
+                            if (label) {
+                                label += ': ';
                             }
+                            label += context.parsed + '%';
+                            return label;
                         }
                     }
-                },
+                }
+            },
             responsive: true,
             maintainAspectRatio: false
         }

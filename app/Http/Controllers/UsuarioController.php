@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SaveUserRequest;
-use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -79,14 +78,6 @@ class UsuarioController extends Controller
         } catch (\Throwable $th) {
             return redirect()->route('usuario.index')->with('status', $th->getMessage());
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(User $user)
-    {
-        //
     }
 
     /**

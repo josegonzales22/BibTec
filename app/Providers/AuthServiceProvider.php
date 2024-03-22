@@ -17,7 +17,8 @@ class AuthServiceProvider extends ServiceProvider
         'App\Models\Libro' => 'App\Policies\LibroPolicy',
         'App\Models\Prestamo' => 'App\Policies\PrestamoPolicy',
         'App\Models\Devolucion' => 'App\Policies\DevolucionPolicy',
-        'App\Models\Autor' => 'App\Policies\AutorPolicy',
+        'App\Models\User' => 'App\Policies\UsuarioPolicy',
+        'App\Models\Historial' => 'App\Policies\HistorialPolicy',
     ];
 
     /**
@@ -29,7 +30,17 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('isAdmin', function ($user){
             return $user->roles->first()->slug == 'admin';
         });
-        Gate::define('isAdminOrTrabajador', function ($user) {
+        Gate::define('isTrabajador', function($user){
+            return $user->roles->first()->slug == 'trabajador';
+        });
+        Gate::define('isProfesor', function($user){
+            return $user->roles->first()->slug == 'profesor';
+        });
+        Gate::define('isEstudiante', function($user){
+            return $user->roles->first()->slug == 'estudiante';
+        });
+
+        Gate::define('isAdmOrTrab', function ($user) {
             $slugs = ['admin', 'trabajador'];
             foreach ($slugs as $slug) {
                 if ($user->roles->contains('slug', $slug)) {
@@ -38,13 +49,7 @@ class AuthServiceProvider extends ServiceProvider
             }
             return false;
         });
-        Gate::define('isTrabajador', function($user){
-            return $user->roles->first()->slug == 'trabajador';
-        });
-        Gate::define('isProfesor', function($user){
-            return $user->roles->first()->slug == 'profesor';
-        });
-        Gate::define('isAdminOrTrabajadorOrProfesor', function ($user) {
+        Gate::define('isAdmOrTrabOrProf', function ($user) {
             $slugs = ['admin', 'profesor', 'trabajador'];
             foreach ($slugs as $slug) {
                 if ($user->roles->contains('slug', $slug)) {
@@ -53,8 +58,14 @@ class AuthServiceProvider extends ServiceProvider
             }
             return false;
         });
-        Gate::define('isEstudiante', function($user){
-            return $user->roles->first()->slug == 'estudiante';
+        Gate::define('isTrabOrProf', function($user){
+            $slugs = ['profesor', 'trabajador'];
+            foreach ($slugs as $slug) {
+                if ($user->roles->contains('slug', $slug)) {
+                    return true;
+                }
+            }
+            return false;
         });
     }
 }

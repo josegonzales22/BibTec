@@ -55,13 +55,13 @@ iname="Libros">
                                 <td>{{$libro->Autores}}</td>
                                 <td>
                                     <div class='d-flex align-items-center justify-content-center'>
-                                        @if (Gate::allows('checkUpdate', [$libro, Auth::user()]))
+                                        @if (Gate::allows('update', [$libro, Auth::user()]))
                                             <a href='{{ route('libro.edit', $libro) }}' class='btn btn-sm bg-warning text-light mr-1'
                                             title="Editar libro">
                                                 <i class="fa-regular fa-pen-to-square"></i>
                                             </a>
                                         @endif
-                                        @if (Gate::allows('checkDelete', [$libro, Auth::user()]))
+                                        @if (Gate::allows('delete', [$libro, Auth::user()]))
                                             <form id="eliminarLibroForm" action="{{ route('libro.delete', $libro->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
@@ -70,7 +70,7 @@ iname="Libros">
                                                 </button>
                                             </form>
                                         @endif
-                                        @if (Gate::allows('checkAddToBaul', [$libro, Auth::user()]))
+                                        @if (Gate::allows('baul', [$libro, Auth::user()]))
                                             @if (!app(App\Http\Controllers\LibrosController::class)->libroExistsInBaul(Auth::user()->id, $libro->id))
                                                 <form action="{{ route('libro.addToBaul', ['user' => Auth::user()->id, 'book' => $libro->id]) }}" method="post">
                                                     @csrf
@@ -87,7 +87,7 @@ iname="Libros">
                                                 </form>
                                             @endif
                                         @endif
-                                        @if (Gate::allows('checkAddToPlantilla', [$libro, Auth::user()]))
+                                        @if (Gate::allows('create', [$libro, Auth::user()]))
                                             <a href="#" class='btn btn-sm bg-info text-light mr-1 open-modal' title="Agregar a plantilla"
                                             data-toggle="modal" data-target="#plantillaModal" data-idbook="{{$libro->id}}">
                                                 <i class="fa-solid fa-inbox"></i>
@@ -100,19 +100,23 @@ iname="Libros">
                     </tbody>
                 </table>
             </div>
+            <div class="col-12 mb-3 " style="text-align: right; margin-left: 12px;">
+                <div class="col-12 mr-4">
+                    <div class="d-flex justify-content-end">
+                        {{ $libros->appends(['busquedaInput' => $busqueda])->onEachSide(1)->render('pagination::bootstrap-5') }}
+                    </div>
+                </div>
+                <a href="{{ route('autor.index') }}" class="btn w-40 my-1 mr-4 btn-a"><i class="fa-solid fa-users"></i>Autor</a>
+                <a href="{{ route('libro.new') }}" class="btn w-40 my-1 mr-4 btn-a"><i class="fa-solid fa-file-circle-plus"></i>Nuevo</a>
+            </div>
         </div>
         @else
             <x-layouts.empty/>
-        @endif
-        <div class="col-12 mb-3 " style="text-align: right; margin-left: 12px;">
-            <div class="col-12 mr-4">
-                <div class="d-flex justify-content-end">
-                    {{ $libros->appends(['busquedaInput' => $busqueda])->onEachSide(1)->render('pagination::bootstrap-5') }}
-                </div>
+            <div class="col-12 mb-3 text-center">
+                <a href="{{ route('autor.index') }}" class="btn w-40 my-1 mr-4 btn-a"><i class="fa-solid fa-users"></i>Autor</a>
+                <a href="{{ route('libro.new') }}" class="btn w-40 my-1 mr-4 btn-a"><i class="fa-solid fa-file-circle-plus"></i>Nuevo</a>
             </div>
-            <a href="{{ route('autor.index') }}" class="btn w-40 my-1 mr-4 btn-a"><i class="fa-solid fa-users"></i>Autor</a>
-            <a href="{{ route('libro.new') }}" class="btn w-40 my-1 mr-4 btn-a"><i class="fa-solid fa-file-circle-plus"></i>Nuevo</a>
-        </div>
+        @endif
     </div>
     <div class="modal fade" id="plantillaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
