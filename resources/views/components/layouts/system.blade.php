@@ -25,10 +25,9 @@
         </div>
     </div>
 <x-layouts.modal/>
-@vite('resources/js/jquery/jquery.min.js')
 <script src="{{ asset('js/jquery/jquery.min.js') }}"></script>
-@vite('resources/js/sb-admin-2.min.js')
-@vite('resources/js/bootstrap/bootstrap.bundle.min.js')
+<script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+<script src="{{ asset('js/bootstrap/bootstrap.bundle.min.js') }}"></script>
 @yield('js_tagsinput')
 @yield('js_addToPlantilla')
 </body>
