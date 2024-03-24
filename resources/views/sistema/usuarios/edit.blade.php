@@ -90,6 +90,7 @@ iname="Editar usuario">
     </div>
 </main>
 <script src="{{ asset('js/jquery/jquery.min.js') }}"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function(){
     var permissions_box = $('#permissions_box');

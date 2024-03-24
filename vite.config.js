@@ -20,7 +20,7 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            'jquery': 'jquery/dist/jquery.slim.js'
+            'jquery': 'jquery'
         }
     },
     optimizeDeps: {

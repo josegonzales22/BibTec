@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Historial;
+use App\Models\Libro;
 use App\Models\Plantilla;
 use App\Models\Prestamo;
 use App\Models\User;
@@ -15,11 +17,6 @@ use Illuminate\Support\Facades\DB;
 
 class PrestamoController extends Controller
 {
-    protected $historial;
-    public function __construct(HistorialController $historial)
-    {
-        $this->historial = $historial;
-    }
     public function index(Request $request)
     {
         $user = auth()->user();
@@ -123,6 +120,14 @@ class PrestamoController extends Controller
         $usuario = User::where('dni', $dni)->value('id');
         return $usuario;
     }
+    public function obtenerStockLibro($idLibro){
+        try {
+            $libro = Libro::findOrFail($idLibro);
+            return $libro->cantidad;
+        } catch (\Throwable $th) {
+            return redirect()->route('devolucion.index')->with('status', $th->getMessage());
+        }
+    }
     public function store(Request $request){
         try {
             $user = auth()->user();
@@ -146,8 +151,16 @@ class PrestamoController extends Controller
                                     'estado' => 'Pendiente'
                                 ]);
                                 $this->deleteFromBaul(Auth::user()->id, $libro->idLibro);
+                                $libroTemp = Libro::findOrFail($libro->idLibro);
+                                $libroTemp->cantidad = $this->obtenerStockLibro($libro->idLibro)-1;
+                                $libroTemp->save();
                                 $fecha = new DateTime();
-                                $this->historial->store(Auth::user()->id, $fecha, 'Préstamo de libro completado', $libro->idLibro);
+                                Historial::create([
+                                    'user_id' => Auth::user()->id,
+                                    'fecha' => $fecha,
+                                    'operacion' => 'Préstamo de libro completado',
+                                    'libro_id' => $libro->idLibro
+                                ]);
                             DB::commit();
                         }
                         return redirect()->route('prestamo.index')
@@ -200,7 +213,12 @@ class PrestamoController extends Controller
                         DB::beginTransaction();
                             Plantilla::create(['nombre' => $request->plantillaName]);
                             $fecha = new DateTime();
-                            $this->historial->store(Auth::user()->id, $fecha, 'Plantilla creada', null);
+                            Historial::create([
+                                'user_id' => Auth::user()->id,
+                                'fecha' => $fecha,
+                                'operacion' => 'Plantilla creada',
+                                'libro_id' => null
+                            ]);
                         DB::commit();
                     }
                 }else{
@@ -222,7 +240,12 @@ class PrestamoController extends Controller
                 DB::beginTransaction();
                     $plantilla->delete();
                     $fecha = new DateTime();
-                    $this->historial->store(Auth::user()->id, $fecha, 'Plantilla eliminada', null);
+                    Historial::create([
+                        'user_id' => Auth::user()->id,
+                        'fecha' => $fecha,
+                        'operacion' => 'Plantilla eliminada',
+                        'libro_id' => null
+                    ]);
                 DB::commit();
                 return redirect()->route('plantilla.index')->with('status', 'Plantilla eliminada exitosamente');
             }else{
@@ -281,7 +304,12 @@ class PrestamoController extends Controller
                     $p->nombre=$request->nombreP;
                     $p->save();
                     $fecha = new DateTime();
-                    $this->historial->store(Auth::user()->id, $fecha, 'Nombre de plantilla actualizada', null);
+                    Historial::create([
+                        'user_id' => Auth::user()->id,
+                        'fecha' => $fecha,
+                        'operacion' => 'Nombre de plantilla actualizada',
+                        'libro_id' => null
+                    ]);
                 DB::commit();
                 return redirect()->route('plantilla.edit', ['plantilla'=>$request->idP])->with('status', 'Plantilla modificada correctamente');
             }else{
@@ -302,7 +330,12 @@ class PrestamoController extends Controller
                     ->where('libro_id',$libro)
                     ->delete();
                     $fecha = new DateTime();
-                    $this->historial->store(Auth::user()->id, $fecha, 'Libro eliminado de plantilla', $libro);
+                    Historial::create([
+                        'user_id' => Auth::user()->id,
+                        'fecha' => $fecha,
+                        'operacion' => 'Libro eliminado de plantilla',
+                        'libro_id' => $libro->idLibro
+                    ]);
                 DB::commit();
                 return redirect()->route('plantilla.edit', ['plantilla' => $plantilla])->with('status', 'Libro eliminado de la plantilla');
             }else{
@@ -398,9 +431,10 @@ class PrestamoController extends Controller
         $fecha = $request->fechaConsulta;
         try {
             $user = User::where('dni', $dni)->firstOrFail();
+            $user2 = auth()->user();
             if($user){
                 $policy = new PrestamosPolicy();
-                if($policy->create($user)){
+                if($policy->create($user2)){
                     $prestamos = Prestamo::where('idUser', $user->id)
                                         ->where('estado', 'Pendiente')
                                         ->where('f_prestamo', $fecha)

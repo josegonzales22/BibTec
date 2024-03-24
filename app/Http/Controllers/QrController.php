@@ -5,6 +5,7 @@ namespace app\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\EnviarQR;
+use App\Models\Historial;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -13,11 +14,6 @@ require_once(app_path().'/Libraries/phpqrcode/qrlib.php');
 
 class QrController extends Controller
 {
-    protected $historial;
-    public function __construct(HistorialController $historial)
-    {
-        $this->historial = $historial;
-    }
     public function enviarCorreoConQR($email){
         try {
             $rutaImagen = public_path('qrcodes/qr_devolucion.png');
@@ -26,7 +22,12 @@ class QrController extends Controller
                     Mail::to($email)->send(new EnviarQR($rutaImagen));
                     unlink($rutaImagen);
                     $fecha = new DateTime();
-                    $this->historial->store(Auth::user()->id, $fecha, 'Código QR enviado al email de estudiante', null);
+                    Historial::create([
+                        'user_id' => Auth::user()->id,
+                        'fecha' => $fecha,
+                        'operacion' => 'Código QR enviado al email de estudiante',
+                        'libro_id' => null
+                    ]);
                 DB::commit();
                 return redirect()->route('prestamo.index')->with('status', 'Código QR enviado exitosamente');
             } else {

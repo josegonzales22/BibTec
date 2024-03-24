@@ -30,8 +30,13 @@ class UsuarioController extends Controller
         return view('sistema.usuarios.index', ['usuarios' => $usuarios, 'busqueda' => $busqueda]);
     }
     public function indexPerfil($id){
-        $usuario = User::findOrFail($id);
-        return view('sistema.perfil', ['usuario' => $usuario]);
+        if($id!=Auth::user()->id){
+            $usuario = User::findOrFail(Auth::user()->id);
+            return view('sistema.perfil', ['usuario' => $usuario]);
+        }else{
+            $usuario = User::findOrFail($id);
+            return view('sistema.perfil', ['usuario' => $usuario]);
+        }
     }
     public function updatePerfil(Request $request){
         $validator = $request->validate([

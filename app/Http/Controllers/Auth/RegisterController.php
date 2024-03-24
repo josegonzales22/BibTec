@@ -68,6 +68,8 @@ class RegisterController extends Controller
     protected function create(array $data){
         DB::beginTransaction();
         try {
+            $idrole = $data['rol_id'];
+            if($idrole!=5){$idrole=5;}
             $user = User::create([
                 'dni' => $data['dni'],
                 'nombres' => $data['nombres'],
@@ -75,7 +77,7 @@ class RegisterController extends Controller
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),
             ]);
-            $idrole = $data['rol_id'];
+
             $user->roles()->attach($idrole);
             $user->save();
             DB::commit();
