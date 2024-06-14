@@ -1,44 +1,44 @@
-<h1>BibTec - Sistema de Gestión de Biblioteca</h1>
-BibTec es una aplicación web completa desarrollada para facilitar la gestión eficiente de bibliotecas. Con una combinación de tecnologías modernas, BibTec ofrece características robustas para administrar libros, usuarios y préstamos de manera efectiva.
+<h1>BibTec - Library Management System</h1>
+BibTec is a comprehensive web application developed to facilitate efficient library management. With a combination of modern technologies, BibTec offers robust features to manage books, users and loans effectively.
 
-<h2>Funcionalidades Destacadas</h2>
+<h2>Featured Features</h2>
 <ul>
-    <li>
-        <b>Autenticación de Usuarios:</b> Incluye un sistema de autenticación completo para administradores y usuarios regulares, garantizando la seguridad y la privacidad de los datos.
-    </li>
-    <li>
-     <b>CRUD de Libros y Usuarios:</b> Ofrece operaciones CRUD completas para gestionar la información de libros y usuarios, lo que permite a los administradores realizar fácilmente acciones como agregar, editar y eliminar registros.   
-    </li>
-    <li>
-        <b>Generación de Códigos QR para Devoluciones Masivas:</b> Facilita las devoluciones masivas de libros mediante la generación de códigos QR, optimizando el proceso para usuarios y personal de la biblioteca.
-    </li>
-    <li>
-     <b>Reservas en Lote (Baul):</b> Permite a los usuarios reservar varios libros para realizar múltiples préstamos simultáneos, simplificando la gestión de préstamos.   
-    </li>
-    <li>
-<b>Gestión de Devoluciones mediante QR:</b> Almacena los préstamos pendientes de un estudiante en un código QR, facilitando la devolución de múltiples libros mediante un escáner en la vista de devoluciones.        
-    </li>
+ <li>
+ <b>User Authentication:</b> Includes a complete authentication system for administrators and regular users, guaranteeing data security and privacy.
+ </li>
+ <li>
+ <b>Books and Users CRUD:</b> Provides complete CRUD operations to manage book and user information, allowing administrators to easily perform actions such as adding, editing and deleting records.
+ </li>
+ <li>
+ <b>Generation of QR Codes for Mass Returns:</b> Facilitates mass returns of books by generating QR codes, optimizing the process for users and library staff.
+ </li>
+ <li>
+ <b>Batch Reservations (Baul):</b> Allows users to reserve several books to make multiple simultaneous loans, simplifying loan management.
+ </li>
+ <li>
+<b>QR Return Management:</b> Store a student's outstanding loans in a QR code, making it easy to return multiple books using a scanner in the returns view.
+ </li>
 </ul>
 
-<h2>Tecnologías Utilizadas</h2>
+<h2>Technologies Used</h2>
 <ul>
-    <li>Backend: Laravel</li>
-    <li>Frontend: Bootstrap</li>
-    <li>Base de Datos: MySQL</li>
-    <li>Otras: phpqrcode</li>
+ <li>Backend: Laravel</li>
+ <li>Frontend: Bootstrap</li>
+ <li>Database: MySQL</li>
+ <li>Others: phpqrcode</li>
 </ul>
 
-<h2>Instalación y Uso</h2>
+<h2>Installation and Use</h2>
 <ul>
-    <li>Clona este repositorio a tu máquina local.</li>
-    <li>Instala las dependencias utilizando Composer.</li>
-    <li>Configura la base de datos MySQL y las credenciales de autenticación en el archivo .env.</li>
-    <li>Ejecuta las migraciones para crear la estructura de la base de datos.</li>
-    <li>Inicia el servidor y accede a la aplicación desde tu navegador.</li>
+ <li>Clone this repository to your local machine.</li>
+ <li>Install dependencies using Composer.</li>
+ <li>Configure the MySQL database and authentication credentials in the .env file.</li>
+ <li>Run the migrations to create the database structure.</li>
+ <li>Start the server and access the application from your browser.</li>
 </ul>
 
-<h2>Contribuciones</h2>
-Las contribuciones son bienvenidas. Si deseas mejorar BibTec o agregar nuevas características, no dudes en enviar un pull request.
+<h2>Contributions</h2>
+Contributions are welcome. If you want to improve BibTec or add new features, feel free to submit a pull request.
 
-<h2>Licencia</h2>
+<h2>License</h2>
 <a href="https://choosealicense.com/licenses/mit/">MIT</a>
